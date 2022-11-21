@@ -1,5 +1,7 @@
 ﻿using SQLiteHelper;
 using System;
+using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace MotionControl.MotionClass
 {
@@ -7,12 +9,11 @@ namespace MotionControl.MotionClass
     {
         public abstract bool[] IO_Intput { get; set; }
         public abstract bool[] IO_Output { get; set; }
-        public abstract ushort[] Card_Number { get; set; }
-        public abstract ushort[] AxisNo { get; set; }
+        public abstract short Card_Number { get; set; }
+        public abstract ushort[] Axis { get; set; }
 
-        /// <summary>
-        /// 运动控制板卡方法异常事件
-        /// </summary>
+        public abstract event Action<DateTime, string> CardLogEvent;
+
         public event Action<object, string> CardErrorMessageEvent;
 
         /// <summary>
@@ -31,6 +32,7 @@ namespace MotionControl.MotionClass
         }
 
         public static string CardBrand { get; set; }
+       
 
         /// <summary>
         /// 获取板卡对象
@@ -55,11 +57,22 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public bool CardErrorMessage<T>(T type, int returnPattern = 1) where T : struct
+        /// <summary>
+        /// 板卡方法异常查询
+        /// </summary>
+        /// <typeparam name="T">值类型</typeparam>
+        /// <param name="type">方法返回值</param>
+        /// <param name="returnPattern">是否查询</param>
+        /// <returns></returns>
+        public virtual bool CardErrorMessage<T>(T type, bool returnPattern = true) where T : struct
         {
             if (Convert.ToInt64(type) != 0)
             {
-                var data = SQLHelper.Readdata(CardBrand, Convert.ToUInt16(type));
+                string data = "";
+                if (returnPattern)
+                {
+                    data = SQLHelper.Readdata(CardBrand, Convert.ToUInt16(type));
+                }
                 CardErrorMessageEvent(type, data);
                 return false;
             }
@@ -69,7 +82,16 @@ namespace MotionControl.MotionClass
             }
         }
 
-
-        public abstract bool OpenCard(ushort[] Card_Number);
+        public abstract bool OpenCard(ushort card_number);
+        public abstract bool OpenCard();
+        public abstract void AxisOn(ushort card, ushort axis);
+        public abstract void AxisOn();
+        public abstract void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode);
+        public abstract void AxisJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1);
+        public abstract void AxisStop(ushort axis, int stop_mode, bool all);
+        public abstract void AxisABS(ushort axis, double position, double speed);
+        public abstract void AxisRel(ushort axis, double position, double speed);
+        public abstract object GetAxisState(ushort axis);
+        public abstract object GetAxisExternalio(ushort axis);
     }
 }

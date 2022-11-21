@@ -21,8 +21,7 @@ namespace MotionControl
             {
                 Console.WriteLine(i.ToString(),message);
             };
-            a.CardErrorMessage(1);
-            a.OpenCard(new ushort[0]);
+            a.OpenCard();
         }
     }
 }
