@@ -1,7 +1,9 @@
 ﻿using SQLiteHelper;
 using System;
+using System.Collections.Concurrent;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Threading;
 
 namespace MotionControl.MotionClass
 {
@@ -12,9 +14,60 @@ namespace MotionControl.MotionClass
         public abstract short Card_Number { get; set; }
         public abstract ushort[] Axis { get; set; }
 
+        public abstract Thread Read_t1 { get; set; }
         public abstract event Action<DateTime, string> CardLogEvent;
 
         public event Action<object, string> CardErrorMessageEvent;
+
+        /// <summary>
+        /// 轴定位状态
+        /// </summary>
+        public struct MoveState
+        {
+            /// <summary>
+            /// 轴定位状态
+            /// </summary>
+            /// <param name="axis">定位轴号</param>
+            /// <param name="cpos">定位前位置</param>
+            /// <param name="pos">定位目标位置</param>
+            /// <param name="move">定位方式</param>
+            /// <param name="sp">定位速度</param>
+            /// <param name="f">定位是否阻塞模式</param>
+            public MoveState(byte axis, double cpos, double pos, byte move, double sp, bool f)
+            {
+                CurrentPosition = cpos;
+                Position = pos;
+                Movetype = move;
+                Speed = sp;
+                Axis = axis;
+                IfWait = f;
+            }
+
+            /// <summary>
+            /// 定位前位置
+            /// </summary>
+            public double CurrentPosition { get; set; }
+            /// <summary>
+            /// 目标位置
+            /// </summary>
+            public double Position { get; set; }
+            /// <summary>
+            /// 轴定位指令
+            /// </summary>
+            public byte Movetype { get; set; }
+            /// <summary>
+            /// 定位速度
+            /// </summary>
+            public double Speed { get; set; }
+            /// <summary>
+            /// 定位轴号
+            /// </summary>
+            public byte Axis { get; set; }
+            /// <summary>
+            /// 定位是否是阻塞模式
+            /// </summary>
+            public bool IfWait { get; set; }
+        }
 
         /// <summary>
         /// 板卡品牌名称
@@ -31,8 +84,15 @@ namespace MotionControl.MotionClass
             GaoChuān,
         }
 
+        /// <summary>
+        /// 板卡厂商
+        /// </summary>
         public static string CardBrand { get; set; }
-       
+
+        /// <summary>
+        /// 轴定位状态队列
+        /// </summary>
+        public virtual ConcurrentQueue<MoveState> IMoveStateQueue { get; set; }
 
         /// <summary>
         /// 获取板卡对象
@@ -73,7 +133,8 @@ namespace MotionControl.MotionClass
                 {
                     data = SQLHelper.Readdata(CardBrand, Convert.ToUInt16(type));
                 }
-                CardErrorMessageEvent(type, data);
+                if (CardErrorMessageEvent != null)
+                    CardErrorMessageEvent(type, data);
                 return false;
             }
             else
@@ -87,11 +148,12 @@ namespace MotionControl.MotionClass
         public abstract void AxisOn(ushort card, ushort axis);
         public abstract void AxisOn();
         public abstract void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode);
-        public abstract void AxisJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1);
+        public abstract void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1);
         public abstract void AxisStop(ushort axis, int stop_mode, bool all);
-        public abstract void AxisABS(ushort axis, double position, double speed);
-        public abstract void AxisRel(ushort axis, double position, double speed);
-        public abstract object GetAxisState(ushort axis);
-        public abstract object GetAxisExternalio(ushort axis);
+        public abstract void MoveAbs(ushort axis, double position, double speed);
+        public abstract void MoveRel(ushort axis, double position, double speed);
+        public abstract double[] GetAxisState(ushort axis);
+        public abstract bool[] GetAxisExternalio(ushort axis);
+        public abstract void MoveReset(ushort axis);
     }
 }

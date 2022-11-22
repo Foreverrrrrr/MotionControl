@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace MotionControl.MotionClass
 {
@@ -24,9 +26,11 @@ namespace MotionControl.MotionClass
         /// 轴号
         /// </summary>
         ushort[] Axis { get; set; }
+
         /// <summary>
-        /// 卡配置
+        /// 数据读取后台线程
         /// </summary>
+        Thread Read_t1 { get; set; }
 
         /// <summary>
         /// 运动控制板卡方法异常事件
@@ -60,7 +64,7 @@ namespace MotionControl.MotionClass
         void AxisOn(ushort card, ushort axis);
 
         /// <summary>
-        /// 轴批量使能
+        /// 所有轴使能
         /// </summary>
         /// <returns></returns>
         void AxisOn();
@@ -81,14 +85,14 @@ namespace MotionControl.MotionClass
         void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode);
 
         /// <summary>
-        /// 轴JOG运动
+        /// 单轴JOG运动
         /// </summary>
         /// <param name="axis">轴号</param>
         /// <param name="speed">运行速度</param>
         /// <param name="posi_mode">运动方向，0：负方向，1：正方向</param>
         /// <param name="acc">加速度</param>
         /// <param name="dec">减速度</param>
-        void AxisJog(ushort axis, double speed, int posi_mode = 0, double acc = 0.1, double dec = 0.1);
+        void MoveJog(ushort axis, double speed, int posi_mode = 0, double acc = 0.1, double dec = 0.1);
 
         /// <summary>
         /// 轴停止
@@ -98,23 +102,43 @@ namespace MotionControl.MotionClass
         /// <param name="all">是否全部轴停止</param>
         void AxisStop(ushort axis, int stop_mode, bool all);
 
+        void MoveReset(ushort axis);
+
         /// <summary>
-        /// 轴绝对定位
+        /// 单轴绝对定位（非阻塞模式，调用该方法后需要自行处理是否运动完成）
         /// </summary>
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        void AxisABS(ushort axis, double position, double speed);
+        void MoveAbs(ushort axis, double position, double speed);
+
         /// <summary>
-        /// 轴相对定位
+        /// 单轴相对定位（非阻塞模式，调用该方法后需要自行处理是否运动完成）
         /// </summary>
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        void AxisRel(ushort axis, double position, double speed);
+        /// 
+        void MoveRel(ushort axis, double position, double speed);
 
-        object GetAxisState(ushort axis);
+        /// <summary>
+        /// 获取轴状态
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <returns>
+        /// 返回值ushort[3]数组
+        /// ushort[0]= 轴状态机：0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
+        /// ushort[1]= 轴运行模式：0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
+        /// ushort[2]= 轴停止原因获取：0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
+        ///                           10：负软限位立即停止  11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止
+        /// </returns>
+        double[] GetAxisState(ushort axis);
 
-        object GetAxisExternalio(ushort axis);
+        /// <summary>
+        /// 获取轴专用IO
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <returns></returns>
+        bool[] GetAxisExternalio(ushort axis);
     }
 }

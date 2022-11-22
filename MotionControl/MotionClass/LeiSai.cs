@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace MotionControl.MotionClass
 {
@@ -25,6 +27,7 @@ namespace MotionControl.MotionClass
         public double Speed { get; set; }
         public double Acc { get; set; }
         public double Dec { get; set; }
+        public override Thread Read_t1 { get; set; }
 
         public override event Action<DateTime, string> CardLogEvent;
 
@@ -70,6 +73,7 @@ namespace MotionControl.MotionClass
                 {
                     Acc = acc;
                     Dec = dec;
+                    Speed = speed;
                     CardErrorMessage(LTDMC.dmc_set_equiv(0, axis, equiv));  //设置脉冲当量
                     CardErrorMessage(LTDMC.dmc_set_profile_unit(0, axis, startvel, speed, acc, dec, stopvel));//设置速度参数
                     CardErrorMessage(LTDMC.dmc_set_s_profile(0, axis, 0, s_para));//设置S段速度参数
@@ -123,6 +127,9 @@ namespace MotionControl.MotionClass
                 if (CardLogEvent != null)
                     CardLogEvent(DateTime.Now, $"初始化{Card_Number}张板卡，总轴数为{Axisquantity}");
                 Axis = new ushort[Axisquantity];
+                Read_t1 = new Thread(Read);
+                Read_t1.IsBackground = true;
+                Read_t1.Start();
                 return true;
             }
             else
@@ -142,7 +149,7 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public override void AxisJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1)
+        public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1)
         {
             if (axis < Axis.Length)
             {
@@ -174,7 +181,7 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public override void AxisABS(ushort axis, double position, double speed)
+        public override void MoveAbs(ushort axis, double position, double speed)
         {
             if (axis < Axis.Length)
             {
@@ -183,7 +190,7 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public override void AxisRel(ushort axis, double position, double speed)
+        public override void MoveRel(ushort axis, double position, double speed)
         {
             if (axis < Axis.Length)
             {
@@ -192,14 +199,24 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public override object GetAxisState(ushort axis)
+        public override double[] GetAxisState(ushort axis)
         {
-            ushort state = 0;
-            LTDMC.dmc_get_axis_run_mode(0, axis, ref state);
-            return state;
+            ushort[] state = new ushort[2];
+            double[] doubles = new double[7];
+            int a = 0;
+            LTDMC.dmc_get_target_position_unit(0, axis, ref doubles[0]);//位置
+            LTDMC.dmc_get_encoder_unit(0, axis, ref doubles[1]);//编码器
+            LTDMC.dmc_read_current_speed_unit(0, axis, ref doubles[2]);//速度
+            LTDMC.dmc_get_position_unit(0, axis, ref doubles[3]);//目标位置
+            LTDMC.nmc_get_axis_state_machine(0, axis, ref state[0]);//轴状态机：0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
+            LTDMC.dmc_get_axis_run_mode(0, axis, ref state[1]);//轴运行模式：0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
+            LTDMC.dmc_get_stop_reason(0, axis, ref a);//轴停止原因获取：0：正常停止  3：LTC 外部触发立即停止，IMD_STOP_AT_LTC 4：EMG 立即停止，IMD_STOP_AT_EMG 5：正硬限位立即停止，IMD_STOP_AT_ELP6：负硬限位立即停止，IMD_STOP_AT_ELN7：正硬限位减速停止，DEC_STOP_AT_ELP8：负硬限位减速停止，DEC_STOP_AT_ELN9：正软限位立即停止，IMD_STOP_AT_SOFT_ELP10：负软限位立即停止，IMD_STOP_AT_SOFT_ELN11：正软限位减速停止，DEC_STOP_AT_SOFT_ELP12：负软限位减速停止，DEC_STOP_AT_SOFT_ELN13：命令立即停止，IMD_STOP_AT_CMD14：命令减速停止，DEC_STOP_AT_CMD15：其它原因立即停止，IMD_STOP_AT_OTHER16：其它原因减速停止，DEC_STOP_AT_OTHER17：未知原因立即停止，IMD_STOP_AT_UNKOWN18：未知原因减速停止，DEC_STOP_AT_UNKOWN
+            Array.Copy(state, 0, doubles, 4, 2);
+            doubles[6] = a;
+            return doubles;
         }
 
-        public override object GetAxisExternalio(ushort axis)
+        public override bool[] GetAxisExternalio(ushort axis)
         {
             var state = LTDMC.dmc_axis_io_status(0, axis);
             bool[] bools = new bool[8];
@@ -212,6 +229,27 @@ namespace MotionControl.MotionClass
             bools[6] = (state & 6) == 6 ? false : true;
             bools[7] = (state & 7) == 7 ? false : true;
             return bools;
+        }
+
+        public override void MoveReset(ushort axis)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Read()
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            while (true)
+            {
+                stopwatch.Restart();
+                for (ushort i = 0; i < Axis.Length; i++)
+                {
+                    GetAxisState(i);
+                    GetAxisExternalio(i);
+                }
+                stopwatch.Stop();
+                Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
+            }
         }
     }
 }
