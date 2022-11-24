@@ -42,8 +42,6 @@ namespace MotionControl.MotionClass
         /// </summary>
         event Action<DateTime, string> CardLogEvent;
 
-     
-
         /// <summary>
         /// 打开指定板卡
         /// </summary>

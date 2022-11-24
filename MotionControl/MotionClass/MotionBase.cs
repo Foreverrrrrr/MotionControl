@@ -164,7 +164,6 @@ namespace MotionControl.MotionClass
         public abstract bool[] Getall_IOoutput(ushort card);
         public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
         public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 3000);
-
         public virtual void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop, ushort start1)
         {
           
