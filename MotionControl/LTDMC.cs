@@ -1562,7 +1562,7 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll")]
         public static extern short nmc_set_controller_workmode(ushort CardNo, ushort controller_mode);
         [DllImport("LTDMC.dll")]
-        public static extern short nmc_get_controller_workmode(ushort CardNo, ref ushort controller_mode);
+        public static extern short nmc_get_controller_workmode(ushort CardNo, ref int controller_mode);
         [DllImport("LTDMC.dll")]
         public static extern short nmc_set_cycletime(ushort CardNo, ushort FieldbusType, int CycleTime);
         [DllImport("LTDMC.dll")]
@@ -1644,7 +1644,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short nmc_get_axis_io_out(UInt16 CardNo, UInt16 axis);
         // 获取总线端口错误码
         [DllImport("LTDMC.dll")]
-        public static extern short nmc_get_errcode(ushort CardNo, ushort channel, ref ushort errcode);
+        public static extern short nmc_get_errcode(ushort CardNo, ushort channel, ref int errcode);
         // 清除总线端口错误码
         [DllImport("LTDMC.dll")]
         public static extern short nmc_clear_errcode(ushort CardNo, ushort channel);

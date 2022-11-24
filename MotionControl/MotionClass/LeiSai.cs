@@ -5,9 +5,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-
 
 namespace MotionControl.MotionClass
 {
@@ -72,9 +69,18 @@ namespace MotionControl.MotionClass
         public double Dec { get; set; }
 
         public override Thread Read_t1 { get; set; }
+
         public override double[] AxisStates { get; set; }
 
+        public override ManualResetEvent AutoReadEvent { get; set; }
+
         public override event Action<DateTime, string> CardLogEvent;
+
+        public LeiSai()
+        {
+            AutoReadEvent = new ManualResetEvent(true);
+            Read_t1 = new Thread(Read);
+        }
 
         public override void AxisOn(ushort card, ushort axis)
         {
@@ -178,9 +184,11 @@ namespace MotionControl.MotionClass
                 if (CardLogEvent != null)
                     CardLogEvent(DateTime.Now, $"初始化{Card_Number}张板卡，总轴数为{Axisquantity}");
                 Axis = new ushort[Axisquantity];
-                Read_t1 = new Thread(Read);
-                Read_t1.IsBackground = true;
-                Read_t1.Start();
+                if (Read_t1.ThreadState == System.Threading.ThreadState.Unstarted)
+                {
+                    Read_t1.IsBackground = true;
+                    Read_t1.Start();
+                }
                 return true;
             }
             else
@@ -200,7 +208,7 @@ namespace MotionControl.MotionClass
             }
         }
 
-        public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1)
+        public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.5, double dec = 0.5)
         {
             if (axis < Axis.Length)
             {
@@ -295,6 +303,7 @@ namespace MotionControl.MotionClass
                 stopwatch.Restart();
                 for (ushort i = 0; i < Axis.Length; i++)
                 {
+                    GetEtherCATState(i);
                     AxisStates = GetAxisState(i);
                     GetAxisExternalio(i);
                     Getall_IOinput(i);
@@ -302,10 +311,11 @@ namespace MotionControl.MotionClass
                 }
                 stopwatch.Stop();
                 Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
+                AutoReadEvent.WaitOne();
             }
         }
 
-        public override void MoveAbsAwait(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveAbs(ushort axis, double position, double speed, int time)
         {
             Stopwatch stopwatch = new Stopwatch();
             if (axis < Axis.Length)
@@ -332,7 +342,7 @@ namespace MotionControl.MotionClass
             throw new Exception($"{axis}轴定位地址{position}，单轴绝对定位等待到位超时：{stopwatch.Elapsed}");
         }
 
-        public override void MoveRelAwait(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveRel(ushort axis, double position, double speed, int time)
         {
             Stopwatch stopwatch = new Stopwatch();
             if (axis < Axis.Length)
@@ -427,6 +437,44 @@ namespace MotionControl.MotionClass
                     CardLogEvent(DateTime.Now, $"等待输入口{indexes}，状态{!waitvalue}超时：{stopwatch.Elapsed}mm");
                 throw new Exception($"等待输入口{indexes}，状态{!waitvalue}超时：{stopwatch.Elapsed}mm");
             }
+        }
+
+        public override int[] GetEtherCATState(ushort card_number)
+        {
+            if (card_number < Card_Number)
+            {
+                int a = 0; int b = 0;
+                LTDMC.nmc_get_cycletime(0, 2, ref a);//总线循环周期us
+                LTDMC.nmc_get_errcode(0, 2, ref b);//总线状态 0=正常
+                return new int[] { a, b };
+            }
+            return null;
+        }
+
+        public override void ResetCard(ushort card, ushort reset)
+        {
+            if (card < Card_Number)
+            {
+                AutoReadEvent.Reset();
+                Thread.Sleep(100);
+                switch (reset)
+                {
+                    case 0: LTDMC.dmc_soft_reset(card); break;
+                    case 1: LTDMC.dmc_cool_reset(card); break;
+                    case 2: LTDMC.dmc_original_reset(card); break;
+                    default:
+                        break;
+                }
+                LTDMC.dmc_board_close();
+                Thread.Sleep(15000);
+                OpenCard();
+                AutoReadEvent.Set();
+            }
+        }
+
+        public override void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop)
+        {
+            throw new NotImplementedException();
         }
     }
 }

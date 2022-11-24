@@ -33,6 +33,10 @@ namespace MotionControl.MotionClass
         Thread Read_t1 { get; set; }
 
         /// <summary>
+        /// 数据读取线程管理
+        /// </summary>
+        ManualResetEvent AutoReadEvent { get; set; }
+        /// <summary>
         /// 运动控制板卡方法异常事件
         /// </summary>
         event Action<object, string> CardErrorMessageEvent;
@@ -92,7 +96,7 @@ namespace MotionControl.MotionClass
         /// <param name="posi_mode">运动方向，0：负方向，1：正方向</param>
         /// <param name="acc">加速度</param>
         /// <param name="dec">减速度</param>
-        void MoveJog(ushort axis, double speed, int posi_mode = 0, double acc = 0.1, double dec = 0.1);
+        void MoveJog(ushort axis, double speed, int posi_mode = 0, double acc = 0.5, double dec = 0.5);
 
         /// <summary>
         /// 轴停止
@@ -102,6 +106,10 @@ namespace MotionControl.MotionClass
         /// <param name="all">是否全部轴停止</param>
         void AxisStop(ushort axis, int stop_mode, bool all);
 
+        /// <summary>
+        /// 轴复位停止前运动
+        /// </summary>
+        /// <param name="axis">轴号</param>
         void MoveReset(ushort axis);
 
         /// <summary>
@@ -128,7 +136,7 @@ namespace MotionControl.MotionClass
         /// <param name="position">绝对地址</param>
         /// <param name="speed">定位速度</param>
         /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
-        void MoveAbsAwait(ushort axis, double position, double speed, int time);
+        void AwaitMoveAbs(ushort axis, double position, double speed, int time);
 
         /// <summary>
         /// 单轴相对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
@@ -137,18 +145,29 @@ namespace MotionControl.MotionClass
         /// <param name="position">相对地址</param>
         /// <param name="speed">定位速度</param>
         /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
-        void MoveRelAwait(ushort axis, double position, double speed, int time);
+        void AwaitMoveRel(ushort axis, double position, double speed, int time);
 
         /// <summary>
-        /// 获取轴状态
+        /// 读取总线状态
+        /// </summary>
+        /// <param name="card_number">板卡号</param>
+        /// <returns>int[0]=总线扫描时长us int[1]总线状态==0正常</returns>
+        int[] GetEtherCATState(ushort card_number);
+
+        /// <summary>
+        /// 获取轴状态信息
         /// </summary>
         /// <param name="axis">轴号</param>
         /// <returns>
-        /// 返回值ushort[3]数组
-        /// ushort[0]= 轴状态机：0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
-        /// ushort[1]= 轴运行模式：0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
-        /// ushort[2]= 轴停止原因获取：0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
-        ///                           10：负软限位立即停止  11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止
+        /// 返回值double[6] 数组
+        ///double[0]= 位置
+        ///double[1]= 伺服编码器位置
+        ///double[2]= 速度
+        ///double[3]= 目标位置
+        ///double[4]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
+        ///double[5]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
+        ///double[6]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
+        ///10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止
         /// </returns>
         double[] GetAxisState(ushort axis);
 
@@ -191,14 +210,21 @@ namespace MotionControl.MotionClass
         void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout);
 
         /// <summary>
-        /// 外部按钮设置
+        /// 外部IO单按钮触发事件设置
         /// </summary>
-        /// <param name="card">板卡号</param>
+        /// <param name="card">外部输入触发板卡号</param>
         /// <param name="start">启动按钮输入点</param>
         /// <param name="reset">复位按钮输入点</param>
         /// <param name="stop">停止按钮输入点</param>
         /// <param name="estop">紧急停止按钮输入点</param>
-        /// <param name="start1">双启动按钮</param>
-        void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop, ushort start1);
+        void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
+
+        /// <summary>
+        /// 运动控制卡复位
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="reset">0=热复位 1=冷复位 2=初始复位</param>
+        void ResetCard(ushort card, ushort reset);
+
     }
 }

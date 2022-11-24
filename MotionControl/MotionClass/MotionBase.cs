@@ -4,8 +4,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Threading;
 
 namespace MotionControl.MotionClass
@@ -19,8 +19,11 @@ namespace MotionControl.MotionClass
         public abstract double[] AxisStates { get; set; }
         public virtual bool LevelSignal { get; set; }
         public abstract Thread Read_t1 { get; set; }
+
+        public abstract ManualResetEvent AutoReadEvent { get; set; }
+
         public abstract event Action<DateTime, string> CardLogEvent;
-        
+
         public virtual event Action<object, string> CardErrorMessageEvent;
 
         /// <summary>
@@ -98,6 +101,7 @@ namespace MotionControl.MotionClass
         /// </summary>
         public virtual ConcurrentQueue<MoveState> IMoveStateQueue { get; set; }
 
+
         /// <summary>
         /// 获取板卡对象
         /// </summary>
@@ -151,22 +155,21 @@ namespace MotionControl.MotionClass
         public abstract void AxisOn(ushort card, ushort axis);
         public abstract void AxisOn();
         public abstract void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode);
-        public abstract void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1);
+        public abstract void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.5, double dec = 0.5);
         public abstract void AxisStop(ushort axis, int stop_mode, bool all);
         public abstract void MoveAbs(ushort axis, double position, double speed);
         public abstract void MoveRel(ushort axis, double position, double speed);
         public abstract double[] GetAxisState(ushort axis);
         public abstract bool[] GetAxisExternalio(ushort axis);
         public abstract void MoveReset(ushort axis);
-        public abstract void MoveAbsAwait(ushort axis, double position, double speed, int time = 3000);
-        public abstract void MoveRelAwait(ushort axis, double position, double speed, int time = 3000);
+        public abstract void AwaitMoveAbs(ushort axis, double position, double speed, int time = 3000);
+        public abstract void AwaitMoveRel(ushort axis, double position, double speed, int time = 3000);
         public abstract bool[] Getall_IOinput(ushort card);
         public abstract bool[] Getall_IOoutput(ushort card);
         public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
         public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 3000);
-        public virtual void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop, ushort start1)
-        {
-          
-        }
+        public abstract void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
+        public abstract int[] GetEtherCATState(ushort card_number);
+        public abstract void ResetCard(ushort card, ushort reset);
     }
 }
