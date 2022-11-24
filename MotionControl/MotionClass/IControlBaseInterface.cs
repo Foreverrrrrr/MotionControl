@@ -10,7 +10,7 @@ namespace MotionControl.MotionClass
         /// <summary>
         /// 数字io输入
         /// </summary>
-        bool[] IO_Intput { get; set; }
+        bool[] IO_Input { get; set; }
 
         /// <summary>
         /// 数字io输出
@@ -41,6 +41,8 @@ namespace MotionControl.MotionClass
         /// 板卡运行日志事件
         /// </summary>
         event Action<DateTime, string> CardLogEvent;
+
+     
 
         /// <summary>
         /// 打开指定板卡
@@ -122,6 +124,24 @@ namespace MotionControl.MotionClass
         void MoveRel(ushort axis, double position, double speed);
 
         /// <summary>
+        /// 单轴绝对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <param name="position">绝对地址</param>
+        /// <param name="speed">定位速度</param>
+        /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
+        void MoveAbsAwait(ushort axis, double position, double speed, int time);
+
+        /// <summary>
+        /// 单轴相对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <param name="position">相对地址</param>
+        /// <param name="speed">定位速度</param>
+        /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
+        void MoveRelAwait(ushort axis, double position, double speed, int time);
+
+        /// <summary>
         /// 获取轴状态
         /// </summary>
         /// <param name="axis">轴号</param>
@@ -140,5 +160,47 @@ namespace MotionControl.MotionClass
         /// <param name="axis">轴号</param>
         /// <returns></returns>
         bool[] GetAxisExternalio(ushort axis);
+
+        /// <summary>
+        /// 获取板卡全部数字输入
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <returns></returns>
+        bool[] Getall_IOinput(ushort card);
+
+        /// <summary>
+        /// 获取板卡全部数字输出
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <returns></returns>
+        bool[] Getall_IOoutput(ushort card);
+
+        /// <summary>
+        /// 设置数字输出
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="indexes">输出口</param>
+        /// <param name="value">输出值</param>
+        void Set_IOoutput(ushort card, ushort indexes, bool value);
+
+        /// <summary>
+        /// 等待输入信号
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="indexes">输入口</param>
+        /// <param name="waitvalue">等待状态</param>
+        /// <param name="timeout">等待超时时间</param>
+        void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout);
+
+        /// <summary>
+        /// 外部按钮设置
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="start">启动按钮输入点</param>
+        /// <param name="reset">复位按钮输入点</param>
+        /// <param name="stop">停止按钮输入点</param>
+        /// <param name="estop">紧急停止按钮输入点</param>
+        /// <param name="start1">双启动按钮</param>
+        void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop, ushort start1);
     }
 }

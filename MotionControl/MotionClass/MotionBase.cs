@@ -1,23 +1,27 @@
 ﻿using SQLiteHelper;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.IO;
+using System.Reflection.Emit;
+using System.Reflection;
 using System.Threading;
 
 namespace MotionControl.MotionClass
 {
     public abstract class MotionBase : IControlBaseInterface
     {
-        public abstract bool[] IO_Intput { get; set; }
+        public abstract bool[] IO_Input { get; set; }
         public abstract bool[] IO_Output { get; set; }
         public abstract short Card_Number { get; set; }
         public abstract ushort[] Axis { get; set; }
-
+        public abstract double[] AxisStates { get; set; }
+        public virtual bool LevelSignal { get; set; }
         public abstract Thread Read_t1 { get; set; }
         public abstract event Action<DateTime, string> CardLogEvent;
-
-        public event Action<object, string> CardErrorMessageEvent;
+        
+        public virtual event Action<object, string> CardErrorMessageEvent;
 
         /// <summary>
         /// 轴定位状态
@@ -142,7 +146,6 @@ namespace MotionControl.MotionClass
                 return true;
             }
         }
-
         public abstract bool OpenCard(ushort card_number);
         public abstract bool OpenCard();
         public abstract void AxisOn(ushort card, ushort axis);
@@ -155,5 +158,16 @@ namespace MotionControl.MotionClass
         public abstract double[] GetAxisState(ushort axis);
         public abstract bool[] GetAxisExternalio(ushort axis);
         public abstract void MoveReset(ushort axis);
+        public abstract void MoveAbsAwait(ushort axis, double position, double speed, int time = 3000);
+        public abstract void MoveRelAwait(ushort axis, double position, double speed, int time = 3000);
+        public abstract bool[] Getall_IOinput(ushort card);
+        public abstract bool[] Getall_IOoutput(ushort card);
+        public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
+        public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 3000);
+
+        public virtual void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop, ushort start1)
+        {
+          
+        }
     }
 }
