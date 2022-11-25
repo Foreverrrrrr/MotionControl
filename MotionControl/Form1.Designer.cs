@@ -72,7 +72,7 @@ namespace MotionControl
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(116, 167);
+            this.button3.Location = new System.Drawing.Point(123, 185);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 2;
@@ -82,7 +82,7 @@ namespace MotionControl
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(269, 167);
+            this.button4.Location = new System.Drawing.Point(276, 185);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 3;
@@ -200,7 +200,7 @@ namespace MotionControl
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(415, 167);
+            this.button5.Location = new System.Drawing.Point(422, 185);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 16;
@@ -209,7 +209,7 @@ namespace MotionControl
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(568, 167);
+            this.button6.Location = new System.Drawing.Point(575, 185);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 17;
@@ -220,7 +220,7 @@ namespace MotionControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 235);
+            this.ClientSize = new System.Drawing.Size(782, 336);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.textBox5);

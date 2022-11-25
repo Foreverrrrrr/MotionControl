@@ -39,15 +39,17 @@ namespace MotionControl.MotionClass
             /// <param name="pos">定位目标位置</param>
             /// <param name="move">定位方式</param>
             /// <param name="sp">定位速度</param>
-            /// <param name="f">定位是否阻塞模式</param>
-            public MoveState(byte axis, double cpos, double pos, byte move, double sp, bool f)
+            /// <param name="outtime">等待超时时间</param>
+            /// <param name="handel">对象句柄</param>
+            public MoveState(byte axis, double cpos, double pos, byte move, double sp, int outtime, DateTime handel)
             {
                 CurrentPosition = cpos;
                 Position = pos;
                 Movetype = move;
                 Speed = sp;
                 Axis = axis;
-                IfWait = f;
+                OutTime = outtime;
+                Handle = handel;
             }
 
             /// <summary>
@@ -61,7 +63,7 @@ namespace MotionControl.MotionClass
             /// <summary>
             /// 轴定位指令
             /// </summary>
-            public byte Movetype { get; set; }
+            public ushort Movetype { get; set; }
             /// <summary>
             /// 定位速度
             /// </summary>
@@ -69,11 +71,15 @@ namespace MotionControl.MotionClass
             /// <summary>
             /// 定位轴号
             /// </summary>
-            public byte Axis { get; set; }
+            public ushort Axis { get; set; }
             /// <summary>
-            /// 定位是否是阻塞模式
+            /// 等待超时时间（ms）
             /// </summary>
-            public bool IfWait { get; set; }
+            public int OutTime { get; set; }
+            /// <summary>
+            /// 状态句柄
+            /// </summary>
+            public DateTime Handle { get; set; }
         }
 
         /// <summary>
@@ -99,7 +105,8 @@ namespace MotionControl.MotionClass
         /// <summary>
         /// 轴定位状态队列
         /// </summary>
-        public virtual ConcurrentQueue<MoveState> IMoveStateQueue { get; set; }
+        public virtual ConcurrentBag<MoveState> IMoveStateQueue { get; set; }
+        public abstract ushort FactorValue { get; set; }
 
 
         /// <summary>
@@ -108,7 +115,7 @@ namespace MotionControl.MotionClass
         /// <param name="modelname">板卡厂商名称</param>
         /// <returns>返回板卡对象</returns>
         /// <exception cref="Exception"> MotionBase类：GetClass方法中出现异常</exception>
-        public static MotionBase GetClassType(CardName modelname)
+        internal static MotionBase GetClassType(CardName modelname)
         {
             try
             {
@@ -143,6 +150,7 @@ namespace MotionControl.MotionClass
                 }
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
+                throw new Exception(data);
                 return false;
             }
             else
@@ -157,8 +165,8 @@ namespace MotionControl.MotionClass
         public abstract void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode);
         public abstract void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.5, double dec = 0.5);
         public abstract void AxisStop(ushort axis, int stop_mode, bool all);
-        public abstract void MoveAbs(ushort axis, double position, double speed);
-        public abstract void MoveRel(ushort axis, double position, double speed);
+        public abstract void MoveAbs(ushort axis, double position, double speed, int time);
+        public abstract void MoveRel(ushort axis, double position, double speed, int time);
         public abstract double[] GetAxisState(ushort axis);
         public abstract bool[] GetAxisExternalio(ushort axis);
         public abstract void MoveReset(ushort axis);

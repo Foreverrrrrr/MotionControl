@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MotionControl.MotionClass
 {
@@ -28,6 +29,11 @@ namespace MotionControl.MotionClass
         ushort[] Axis { get; set; }
 
         /// <summary>
+        /// 到位误差
+        /// </summary>
+        ushort FactorValue { get; set; }
+
+        /// <summary>
         /// 数据读取后台线程
         /// </summary>
         Thread Read_t1 { get; set; }
@@ -36,6 +42,7 @@ namespace MotionControl.MotionClass
         /// 数据读取线程管理
         /// </summary>
         ManualResetEvent AutoReadEvent { get; set; }
+
         /// <summary>
         /// 运动控制板卡方法异常事件
         /// </summary>
@@ -107,7 +114,7 @@ namespace MotionControl.MotionClass
         void AxisStop(ushort axis, int stop_mode, bool all);
 
         /// <summary>
-        /// 轴复位停止前运动
+        /// 复位轴停止前定位动作
         /// </summary>
         /// <param name="axis">轴号</param>
         void MoveReset(ushort axis);
@@ -118,7 +125,7 @@ namespace MotionControl.MotionClass
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        void MoveAbs(ushort axis, double position, double speed);
+        void MoveAbs(ushort axis, double position, double speed, int time);
 
         /// <summary>
         /// 单轴相对定位（非阻塞模式，调用该方法后需要自行处理是否运动完成）
@@ -127,7 +134,7 @@ namespace MotionControl.MotionClass
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
         /// 
-        void MoveRel(ushort axis, double position, double speed);
+        void MoveRel(ushort axis, double position, double speed, int time);
 
         /// <summary>
         /// 单轴绝对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
@@ -158,15 +165,15 @@ namespace MotionControl.MotionClass
         /// 获取轴状态信息
         /// </summary>
         /// <param name="axis">轴号</param>
-        /// <returns>
-        /// 返回值double[6] 数组
-        ///double[0]= 位置
+        /// <returns> 返回值double[6] 数组
+        ///double[0]= 脉冲位置
         ///double[1]= 伺服编码器位置
         ///double[2]= 速度
         ///double[3]= 目标位置
-        ///double[4]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
-        ///double[5]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
-        ///double[6]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
+        ///double[4]= 轴运动到位 0=运动中 1=轴停止
+        ///double[5]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
+        ///double[6]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
+        ///double[7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
         ///10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止
         /// </returns>
         double[] GetAxisState(ushort axis);
@@ -196,7 +203,7 @@ namespace MotionControl.MotionClass
         /// 设置数字输出
         /// </summary>
         /// <param name="card">板卡号</param>
-        /// <param name="indexes">输出口</param>
+        /// <param name="indexes">输出点位</param>
         /// <param name="value">输出值</param>
         void Set_IOoutput(ushort card, ushort indexes, bool value);
 
