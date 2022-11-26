@@ -150,7 +150,7 @@ namespace MotionControl.MotionClass
                 }
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
-                throw new Exception(data);
+                throw new Exception("type:"+data);
                 return false;
             }
             else
