@@ -107,7 +107,18 @@ namespace MotionControl.MotionClass
         /// </summary>
         public virtual ConcurrentBag<MoveState> IMoveStateQueue { get; set; }
         public abstract ushort FactorValue { get; set; }
-
+        /// <summary>
+        /// 定位速度
+        /// </summary>
+        public abstract double Speed { get; set; }
+        /// <summary>
+        /// 加速度
+        /// </summary>
+        public abstract double Acc { get; set; }
+        /// <summary>
+        /// 减速度
+        /// </summary>
+        public abstract double Dec { get; set; }
 
         /// <summary>
         /// 获取板卡对象
@@ -150,7 +161,7 @@ namespace MotionControl.MotionClass
                 }
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
-                throw new Exception("type:"+data);
+                throw new Exception("type:" + data);
                 return false;
             }
             else
@@ -158,6 +169,7 @@ namespace MotionControl.MotionClass
                 return true;
             }
         }
+
         public abstract bool OpenCard(ushort card_number);
         public abstract bool OpenCard();
         public abstract void AxisOn(ushort card, ushort axis);

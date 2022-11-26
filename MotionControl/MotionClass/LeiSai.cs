@@ -67,10 +67,10 @@ namespace MotionControl.MotionClass
         public override ushort[] Axis { get; set; }
         public int Axisquantity { get; set; }
         public override ushort FactorValue { get; set; }
+        public override double Speed { get; set; }
+        public override double Acc { get; set; }
+        public override double Dec { get; set; }
 
-        public double Speed { get; set; }
-        public double Acc { get; set; }
-        public double Dec { get; set; }
 
         public override Thread Read_t1 { get; set; }
 
@@ -79,6 +79,7 @@ namespace MotionControl.MotionClass
         public override ManualResetEvent AutoReadEvent { get; set; }
 
         public override ConcurrentBag<MoveState> IMoveStateQueue { get; set; }
+       
 
         public override event Action<DateTime, string> CardLogEvent;
 
