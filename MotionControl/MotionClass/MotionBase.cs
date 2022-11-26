@@ -12,11 +12,12 @@ namespace MotionControl.MotionClass
 {
     public abstract class MotionBase : IControlBaseInterface
     {
+        public static MotionBase thismotion { get; set; }
         public abstract bool[] IO_Input { get; set; }
         public abstract bool[] IO_Output { get; set; }
         public abstract short Card_Number { get; set; }
         public abstract ushort[] Axis { get; set; }
-        public abstract double[] AxisStates { get; set; }
+        public abstract double[][] AxisStates { get; set; }
         public virtual bool LevelSignal { get; set; }
         public abstract Thread Read_t1 { get; set; }
 
@@ -169,7 +170,6 @@ namespace MotionControl.MotionClass
                 return true;
             }
         }
-
         public abstract bool OpenCard(ushort card_number);
         public abstract bool OpenCard();
         public abstract void AxisOn(ushort card, ushort axis);
@@ -191,5 +191,6 @@ namespace MotionControl.MotionClass
         public abstract void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
         public abstract int[] GetEtherCATState(ushort card_number);
         public abstract void ResetCard(ushort card, ushort reset);
+
     }
 }

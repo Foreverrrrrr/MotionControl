@@ -16,13 +16,22 @@ namespace MotionControl
         MotionBase motion;
         public Form1()
         {
-            InitializeComponent();
-            motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
-            motion.CardErrorMessageEvent += (i, message) =>
+            try
             {
-                Console.WriteLine(i.ToString(),message);
-            };
-            motion.OpenCard();
+                InitializeComponent();
+                motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
+                motion.CardErrorMessageEvent += (i, message) =>
+                {
+                    Console.WriteLine(i.ToString(), message);
+                };
+                motion.OpenCard();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.StackTrace+"\n"+ex.Message);
+            }
+           
         }
 
         private void Form1_Load(object sender, EventArgs e)
