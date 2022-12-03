@@ -105,16 +105,10 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="LTDMC.cs" />
-    <Compile Include="MotionClass\IControlBaseInterface.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="MotionClass\LeiSai.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="MotionClass\MotionBase.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
+    <Compile Include="MotionClass\IControlBaseInterface.cs" />
+    <Compile Include="MotionClass\LeiSai.cs" />
+    <Compile Include="MotionClass\LTDMC.cs" />
+    <Compile Include="MotionClass\MotionBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

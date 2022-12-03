@@ -125,6 +125,7 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
+        /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
         void MoveAbs(ushort axis, double position, double speed, int time);
 
         /// <summary>
@@ -133,7 +134,7 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        /// 
+        /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
         void MoveRel(ushort axis, double position, double speed, int time);
 
         /// <summary>

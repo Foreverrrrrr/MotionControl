@@ -7,10 +7,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Windows.Forms.AxHost;
 
 namespace MotionControl
 {
+    /// <summary>
+    /// 雷赛板卡类
+    /// </summary>
     public sealed class LeiSai : MotionBase
     {
         /// <summary>
@@ -59,7 +61,6 @@ namespace MotionControl
         public enum CardOne
         {
             X,
-
         }
         /// <inheritdoc/>
 
@@ -70,6 +71,9 @@ namespace MotionControl
         public override short Card_Number { get; set; }
         /// <inheritdoc/>
         public override ushort[] Axis { get; set; }
+        /// <summary>
+        /// 轴数量
+        /// </summary>
         public int Axisquantity { get; set; }
         /// <inheritdoc/>
         public override ushort FactorValue { get; set; }
@@ -664,14 +668,15 @@ namespace MotionControl
         public override bool[] GetAxisExternalio(ushort axis)
         {
             var state = LTDMC.dmc_axis_io_status(0, axis);
-            bool[] bools = new bool[7];
-            bools[0] = (state & 1) == 1 ? true : false;// 伺服报警 True=ON 
-            bools[1] = (state & 2) == 2 ? true : false;// 正限位 True=ON 
-            bools[2] = (state & 4) == 4 ? true : false;// 负限位 True=ON 
-            bools[3] = (state & 8) == 8 ? true : false;// 急停 True=ON 
-            bools[4] = (state & 16) == 16 ? true : false;// 原点 True=ON 
-            bools[5] = (state & 32) == 32 ? true : false;// 正软限位 True=ON 
-            bools[6] = (state & 64) == 64 ? true : false;// 负软限位 True=ON
+            bool[] bools = new bool[8];
+            bools[0] = (state & 0) == 0 ? false : true;
+            bools[1] = (state & 1) == 1 ? false : true;
+            bools[2] = (state & 2) == 2 ? false : true;
+            bools[3] = (state & 3) == 3 ? false : true;
+            bools[4] = (state & 4) == 4 ? false : true;
+            bools[5] = (state & 5) == 5 ? false : true;
+            bools[6] = (state & 6) == 6 ? false : true;
+            bools[7] = (state & 7) == 7 ? false : true;
             return bools;
         }
         /// <inheritdoc/>
@@ -703,7 +708,7 @@ namespace MotionControl
                 {
                     GetEtherCATState(i);
                     AxisStates[i] = GetAxisState(i);
-                      GetAxisExternalio(i);
+                    GetAxisExternalio(i);
                     IO_Input = Getall_IOinput(i);
                     IO_Output = Getall_IOoutput(i);
                 }

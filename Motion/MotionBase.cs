@@ -9,8 +9,14 @@ using System.Threading;
 
 namespace MotionControl
 {
+    /// <summary>
+    /// 运动控制基类
+    /// </summary>
     public abstract class MotionBase : IControlBaseInterface
     {
+        /// <summary>
+        /// 运动控制对象实例
+        /// </summary>
         public static MotionBase thismotion { get; set; }
         /// <inheritdoc/>
         public abstract bool[] IO_Input { get; set; }
@@ -20,7 +26,13 @@ namespace MotionControl
         public abstract short Card_Number { get; set; }
         /// <inheritdoc/>
         public abstract ushort[] Axis { get; set; }
+        /// <summary>
+        /// 轴状态
+        /// </summary>
         public abstract double[][] AxisStates { get; set; }
+        /// <summary>
+        /// 输入输出电平反转
+        /// </summary>
         public virtual bool LevelSignal { get; set; }
         /// <inheritdoc/>
         public abstract Thread Read_t1 { get; set; }
@@ -171,7 +183,6 @@ namespace MotionControl
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
                 throw new Exception("type:" + data);
-                return false;
             }
             else
             {

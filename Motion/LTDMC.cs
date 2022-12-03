@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MotionControl //命名空间根据应用程序修改
 {
-    public delegate uint DMC3K5K_OPERATE(IntPtr operate_data); 
+    public delegate uint DMC3K5K_OPERATE(IntPtr operate_data);
     public partial class LTDMC
     {
         //设置和读取打印模式（适用于所有脉冲/总线卡）
@@ -89,7 +89,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_equiv(UInt16 CardNo, UInt16 axis, double equiv);
         //反向间隙(脉冲)（适用于DMC5000系列脉冲卡）	
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_backlash_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_set_backlash_unit(UInt16 CardNo, UInt16 axis, double backlash); 
+        public static extern short dmc_set_backlash_unit(UInt16 CardNo, UInt16 axis, double backlash);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_backlash_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_get_backlash_unit(UInt16 CardNo, UInt16 axis, ref double backlash);
 
@@ -166,7 +166,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_get_dec_stop_dist(UInt16 CardNo, UInt16 axis, ref Int32 dist);
         //IO减速停止，支持pmove/vmove运动（适用于DMC3000、DMC5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_io_exactstop(UInt16 CardNo, UInt16 axis, UInt16 ioNum, UInt16[] ioList, UInt16 enable, UInt16 valid_logic, UInt16 action, UInt16 move_dir);       
+        public static extern short dmc_set_io_exactstop(UInt16 CardNo, UInt16 axis, UInt16 ioNum, UInt16[] ioList, UInt16 enable, UInt16 valid_logic, UInt16 action, UInt16 move_dir);
         //设置通用输入口的一位减速停止IO口（保留）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_io_dstp_bitno(UInt16 CardNo, UInt16 axis, UInt16 bitno, double filter);
@@ -193,18 +193,18 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_profile_unit_acc", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_profile_unit_acc(UInt16 CardNo, UInt16 Axis, double Min_Vel, double Max_Vel, double Tacc, double Tdec, double Stop_Vel);   //单轴速度参数
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_profile_unit_acc", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_profile_unit_acc(UInt16 CardNo, UInt16 Axis, ref double Min_Vel, ref double Max_Vel, ref double Tacc, ref double Tdec, ref double Stop_Vel);      
+        public static extern short dmc_get_profile_unit_acc(UInt16 CardNo, UInt16 Axis, ref double Min_Vel, ref double Max_Vel, ref double Tacc, ref double Tdec, ref double Stop_Vel);
         //设置读取平滑速度曲线参数（适用于所有脉冲/总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_s_profile", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_s_profile(UInt16 CardNo, UInt16 axis, UInt16 s_mode, double s_para);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_s_profile", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_s_profile(UInt16 CardNo, UInt16 axis, UInt16 s_mode, ref double s_para);            
+        public static extern short dmc_get_s_profile(UInt16 CardNo, UInt16 axis, UInt16 s_mode, ref double s_para);
         //点位运动(脉冲)（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_pmove", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_pmove(UInt16 CardNo, UInt16 axis, Int32 Dist, UInt16 posi_mode);
         //点位运动(当量)（适用于EtherCAT总线卡、RTEX总线卡、DMC5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_pmove_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_pmove_unit(UInt16 CardNo, UInt16 axis, double Dist, UInt16 posi_mode);  
+        public static extern short dmc_pmove_unit(UInt16 CardNo, UInt16 axis, double Dist, UInt16 posi_mode);
         //指定轴做定长位移运动 同时发送速度和S时间(脉冲)（适用于DMC5X10系列脉冲卡）	
         [DllImport("LTDMC.dll")]
         public static extern short dmc_pmove_extern(UInt16 CardNo, UInt16 axis, double dist, double Min_Vel, double Max_Vel, double Tacc, double Tdec, double stop_Vel, double s_para, UInt16 posi_mode);
@@ -213,13 +213,13 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_reset_target_position(UInt16 CardNo, UInt16 axis, Int32 dist, UInt16 posi_mode);
         //变速变位(当量)（适用于EtherCAT总线卡、RTEX总线卡、DMC5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_reset_target_position_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_reset_target_position_unit(UInt16 CardNo, UInt16 Axis, double New_Pos); 
+        public static extern short dmc_reset_target_position_unit(UInt16 CardNo, UInt16 Axis, double New_Pos);
         //在线变速(脉冲)，运动中改变指定轴的当前运动速度（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_change_speed", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_change_speed(UInt16 CardNo, UInt16 axis, double Curr_Vel, double Taccdec);
         //在线变速(当量)，运动中改变指定轴的当前运动速度（适用于EtherCAT总线卡、RTEX总线卡、DMC5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_change_speed_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_change_speed_unit(UInt16 CardNo, UInt16 Axis, double New_Vel, double Taccdec);    
+        public static extern short dmc_change_speed_unit(UInt16 CardNo, UInt16 Axis, double New_Vel, double Taccdec);
         //无论运动与否强行改变目标位置（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_update_target_position", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_update_target_position(UInt16 CardNo, UInt16 axis, Int32 dist, UInt16 posi_mode);
@@ -228,7 +228,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_update_target_position_extern(UInt16 CardNo, UInt16 axis, double mid_pos, double aim_pos, double vel, UInt16 posi_mode);
         //在线变速(当量)，运动中改变指定轴的当前运动速度（适用于EtherCAT总线卡、RTEX总线卡、DMC5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_update_target_position_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_update_target_position_unit(UInt16 CardNo, UInt16 Axis, double New_Pos);           
+        public static extern short dmc_update_target_position_unit(UInt16 CardNo, UInt16 Axis, double New_Pos);
         //---------------------JOG运动--------------------
         //单轴连续速度运动（适用于所有脉冲/总线卡）	
         [DllImport("LTDMC.dll", EntryPoint = "dmc_vmove", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -239,7 +239,7 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_vector_profile_multicoor", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_vector_profile_multicoor(UInt16 CardNo, UInt16 Crd, double Min_Vel, double Max_Vel, double Tacc, double Tdec, double Stop_Vel);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_vector_profile_multicoor", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_vector_profile_multicoor(UInt16 CardNo, UInt16 Crd, ref double Min_Vel, ref double Max_Vel, ref double Taccdec, ref double Tdec, ref double Stop_Vel);       
+        public static extern short dmc_get_vector_profile_multicoor(UInt16 CardNo, UInt16 Crd, ref double Min_Vel, ref double Max_Vel, ref double Taccdec, ref double Tdec, ref double Stop_Vel);
         //设置读取平滑速度曲线参数（适用于DMC3000系列脉冲卡）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_vector_s_profile_multicoor(UInt16 CardNo, UInt16 Crd, UInt16 s_mode, double s_para);
@@ -315,7 +315,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_GetGearProfile(UInt16 CardNo, UInt16 axis, ref UInt16 MasterType, ref UInt16 MasterIndex, ref UInt32 MasterEven, ref UInt32 SlaveEven, ref UInt32 MasterSlope);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_GearMove(UInt16 CardNo, UInt16 AxisNum, UInt16[] AxisList);
-              
+
         //--------------------回零运动---------------------
         //设置读取HOME信号（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_home_pin_logic", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -367,7 +367,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_home_soft_limit(UInt16 CardNo, UInt16 Axis, Int32 N_limit, Int32 P_limit);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_home_soft_limit(UInt16 CardNo, UInt16 Axis, ref Int32 N_limit, ref Int32 P_limit);
-       
+
         //--------------------原点锁存-------------------
         //设置读取EZ锁存模式（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_homelatch_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -434,7 +434,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_get_handwheel_inmode_extern_decimals(UInt16 CardNo, ref UInt16 inmode, ref UInt16 AxisNum, UInt16[] AxisList, double[] multi);
         //启动手轮运动（适用于所有脉冲/总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_handwheel_move", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_handwheel_move(UInt16 CardNo, UInt16 axis);    
+        public static extern short dmc_handwheel_move(UInt16 CardNo, UInt16 axis);
         //手轮运动 新增总线的手轮模式  (保留)
         [DllImport("LTDMC.dll")]
         public static extern short dmc_handwheel_set_axislist(UInt16 CardNo, UInt16 AxisSelIndex, UInt16 AxisNum, UInt16[] AxisList);
@@ -454,7 +454,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_handwheel_get_index(UInt16 CardNo, ref UInt16 AxisSelIndex, ref UInt16 RatioSelIndex);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_handwheel_stop(UInt16 CardNo);
-        
+
         //-------------------------高速锁存-------------------
         //设置读取指定轴的LTC信号（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_ltc_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -559,7 +559,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_compare_add_point(UInt16 CardNo, UInt16 axis, int pos, UInt16 dir, UInt16 action, UInt32 actpara);
         //添加比较点（适用于所有DMC5X10脉冲卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_compare_add_point_unit(UInt16 CardNo, UInt16 cmp, double pos, UInt16 dir, UInt16 action, UInt32 actpara);        
+        public static extern short dmc_compare_add_point_unit(UInt16 CardNo, UInt16 cmp, double pos, UInt16 dir, UInt16 action, UInt32 actpara);
         //添加比较点（适用于E3032/R3032）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_compare_add_point_cycle(UInt16 CardNo, UInt16 cmp, Int32 pos, UInt16 dir, UInt32 bitno, UInt32 cycle, UInt16 level);
@@ -578,7 +578,7 @@ namespace MotionControl //命名空间根据应用程序修改
         //查询可以加入的比较点数量（适用于所有脉冲/总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_compare_get_points_remained", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_compare_get_points_remained(UInt16 CardNo, UInt16 axis, ref Int32 pointNum);
-        
+
         //-------------------二维低速位置比较-----------------------
         //配置读取比较器（适用于所有脉冲卡、EtherCAT总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_compare_set_config_extern", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -618,7 +618,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_compare_add_point_multi(UInt16 CardNo, UInt16 cmp, Int32 pos, UInt16 dir, UInt16 action, UInt32 actpara, double times);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_compare_add_point_multi_unit(UInt16 CardNo, UInt16 cmp, double pos, UInt16 dir, UInt16 action, UInt32 actpara, double times);//添加比较点 增强
-        
+
         //----------- 单轴高速位置比较-----------------------        
         //设置读取高速比较模式（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_hcmp_set_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -640,7 +640,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_hcmp_add_point(UInt16 CardNo, UInt16 hcmp, Int32 cmp_pos);
         //添加比较点unit（适用于DMC5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_hcmp_add_point_unit(UInt16 CardNo, UInt16 hcmp, double cmp_pos);       
+        public static extern short dmc_hcmp_add_point_unit(UInt16 CardNo, UInt16 hcmp, double cmp_pos);
         //设置读取线性模式参数（适用于所有脉冲卡、E3032总线卡、R3032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_hcmp_set_liner", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_hcmp_set_liner(UInt16 CardNo, UInt16 hcmp, Int32 Increment, Int32 Count);
@@ -716,7 +716,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_hcmp_2d_get_current_state(UInt16 CardNo, UInt16 hcmp, ref Int32 remained_points, ref Int32 x_current_point, ref Int32 y_current_point, ref Int32 runned_points, ref UInt16 current_state);
         //读取二维高速比较参数（适用于DMC5X10系列脉冲卡、EtherCAT总线卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_hcmp_2d_get_current_state_unit(UInt16 CardNo, UInt16 hcmp, ref int remained_points, ref double x_current_point, ref double y_current_point, ref int runned_points, ref UInt16 current_state, ref UInt16 current_outbit); 
+        public static extern short dmc_hcmp_2d_get_current_state_unit(UInt16 CardNo, UInt16 hcmp, ref int remained_points, ref double x_current_point, ref double y_current_point, ref int runned_points, ref UInt16 current_state, ref UInt16 current_outbit);
         //清除二维高速位置比较点（适用于所有脉冲卡、EtherCAT总线卡）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_hcmp_2d_clear_points(UInt16 CardNo, UInt16 hcmp);
@@ -728,7 +728,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_hcmp_2d_set_pwmoutput(UInt16 CardNo, UInt16 hcmp, UInt16 pwm_enable, double duty, double freq, UInt16 pwm_number);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_hcmp_2d_get_pwmoutput(UInt16 CardNo, UInt16 hcmp, ref UInt16 pwm_enable, ref double duty, ref double freq, ref UInt16 pwm_number);
-        
+
         //------------------------通用IO-----------------------
         //读取输入口的状态（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_read_inbit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -764,7 +764,7 @@ namespace MotionControl //命名空间根据应用程序修改
         //读取输出端口的值（适用于DMC3000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_read_outport_ex(ushort CardNo, ushort portno, ref UInt32 state);
-        
+
         //设置读取虚拟IO映射关系（适用于所有脉冲卡） 
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_io_map_virtual", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_io_map_virtual(UInt16 CardNo, UInt16 bitno, UInt16 MapIoType, UInt16 MapIoIndex, double Filter);
@@ -778,7 +778,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_reverse_outbit(UInt16 CardNo, UInt16 bitno, double reverse_time);
         //设置读取IO计数模式（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_io_count_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_set_io_count_mode(UInt16 CardNo, UInt16 bitno, UInt16 mode, double filter_time);        
+        public static extern short dmc_set_io_count_mode(UInt16 CardNo, UInt16 bitno, UInt16 mode, double filter_time);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_io_count_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_get_io_count_mode(UInt16 CardNo, UInt16 bitno, ref UInt16 mode, ref double filter_time);
         //设置IO计数值（适用于所有脉冲卡、总线卡）
@@ -786,7 +786,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_io_count_value(UInt16 CardNo, UInt16 bitno, UInt32 CountValue);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_io_count_value", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_get_io_count_value(UInt16 CardNo, UInt16 bitno, ref UInt32 CountValue);
-                 
+
         //-----------------------专用IO 脉冲卡专用-------------------------
         //设置读取轴IO映射关系（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_axis_io_map", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -861,7 +861,7 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_encoder_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_encoder_unit(UInt16 CardNo, UInt16 axis, double pos);     //当前反馈位置
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_encoder_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_encoder_unit(UInt16 CardNo, UInt16 axis, ref double pos);        
+        public static extern short dmc_get_encoder_unit(UInt16 CardNo, UInt16 axis, ref double pos);
         //---------------------辅助编码器 总线卡---------------------
         //手轮编码器（备用，同dmc_set_extra_encoder）
         [DllImport("LTDMC.dll")]
@@ -934,10 +934,10 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_LinkState(UInt16 CardNo, ref UInt16 State);
         //读取指定轴的运动模式（适用于DMC5000/5X10系列脉冲卡、所有总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_axis_run_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_axis_run_mode(UInt16 CardNo, UInt16 axis, ref UInt16 run_mode);  
+        public static extern short dmc_get_axis_run_mode(UInt16 CardNo, UInt16 axis, ref UInt16 run_mode);
         //读取轴停止原因（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_stop_reason", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_stop_reason(UInt16 CardNo, UInt16 axis, ref Int32 StopReason);    
+        public static extern short dmc_get_stop_reason(UInt16 CardNo, UInt16 axis, ref Int32 StopReason);
         //清除轴停止原因（适用于所有脉冲卡、总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_clear_stop_reason", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_clear_stop_reason(UInt16 CardNo, UInt16 axis);
@@ -1096,7 +1096,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_conti_get_run_state(UInt16 CardNo, UInt16 Crd);
         //检测连续插补运动状态：0-运行，1-停止（预留）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_check_done", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_check_done(UInt16 CardNo, UInt16 Crd);  
+        public static extern short dmc_conti_check_done(UInt16 CardNo, UInt16 Crd);
         //查连续插补剩余缓存数（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_remain_space", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern Int32 dmc_conti_remain_space(UInt16 CardNo, UInt16 Crd);
@@ -1105,12 +1105,12 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern Int32 dmc_conti_read_current_mark(UInt16 CardNo, UInt16 Crd);
         //blend拐角过度模式（适用于DMC5000系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_set_blend", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_set_blend(UInt16 CardNo, UInt16 Crd, UInt16 enable);      
+        public static extern short dmc_conti_set_blend(UInt16 CardNo, UInt16 Crd, UInt16 enable);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_get_blend", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_conti_get_blend(UInt16 CardNo, UInt16 Crd, ref UInt16 enable);
         //设置每段速度比例  缓冲区指令（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_set_override", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_set_override(UInt16 CardNo, UInt16 Crd, double Percent);      
+        public static extern short dmc_conti_set_override(UInt16 CardNo, UInt16 Crd, double Percent);
         //设置插补中动态变速（适用于DMC5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_change_speed_ratio", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_conti_change_speed_ratio(UInt16 CardNo, UInt16 Crd, double Percent);
@@ -1125,22 +1125,22 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_conti_wait_input(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double TimeOut, Int32 mark);
         //相对于轨迹起点IO滞后输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_delay_outbit_to_start", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_delay_outbit_to_start(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double delay_value, UInt16 delay_mode, double ReverseTime);      
+        public static extern short dmc_conti_delay_outbit_to_start(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double delay_value, UInt16 delay_mode, double ReverseTime);
         //相对于轨迹终点IO滞后输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_delay_outbit_to_stop", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_delay_outbit_to_stop(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double delay_time, double ReverseTime);      
+        public static extern short dmc_conti_delay_outbit_to_stop(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double delay_time, double ReverseTime);
         //相对于轨迹终点IO提前输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_ahead_outbit_to_stop", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_ahead_outbit_to_stop(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double ahead_value, UInt16 ahead_mode, double ReverseTime);  
+        public static extern short dmc_conti_ahead_outbit_to_stop(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double ahead_value, UInt16 ahead_mode, double ReverseTime);
         //连续插补精确位置CMP输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_accurate_outbit_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_accurate_outbit_unit(UInt16 CardNo, UInt16 Crd, UInt16 cmp_no, UInt16 on_off, UInt16 map_axis, double abs_pos, UInt16 pos_source, double ReverseTime);    
+        public static extern short dmc_conti_accurate_outbit_unit(UInt16 CardNo, UInt16 Crd, UInt16 cmp_no, UInt16 on_off, UInt16 map_axis, double abs_pos, UInt16 pos_source, double ReverseTime);
         //连续插补立即IO输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_write_outbit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_write_outbit(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double ReverseTime);     
+        public static extern short dmc_conti_write_outbit(UInt16 CardNo, UInt16 Crd, UInt16 bitno, UInt16 on_off, double ReverseTime);
         //清除段内未执行完的IO（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_clear_io_action", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_clear_io_action(UInt16 CardNo, UInt16 Crd, UInt32 IoMask);    
+        public static extern short dmc_conti_clear_io_action(UInt16 CardNo, UInt16 Crd, UInt32 IoMask);
         //连续插补暂停及异常时IO输出状态（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_set_pause_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_conti_set_pause_output(UInt16 CardNo, UInt16 Crd, UInt16 action, Int32 mask, Int32 state);     //暂停时IO输出 action 0, 不工作；1， 暂停时输出io_state; 2 暂停时输出io_state, 继续运行时首先恢复原来的io; 3,在2的基础上，停止时也生效。
@@ -1163,16 +1163,16 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_conti_line_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, UInt16 posi_mode, Int32 mark); //连续插补直线
         //连续插补圆心圆弧插补（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_arc_move_center_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_arc_move_center_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double[] Cen_Pos, UInt16 Arc_Dir, Int32 Circle, UInt16 posi_mode, Int32 mark);    
+        public static extern short dmc_conti_arc_move_center_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double[] Cen_Pos, UInt16 Arc_Dir, Int32 Circle, UInt16 posi_mode, Int32 mark);
         //连续插补半径圆弧插补（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_arc_move_radius_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_arc_move_radius_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double Arc_Radius, UInt16 Arc_Dir, Int32 Circle, UInt16 posi_mode, Int32 mark);   
+        public static extern short dmc_conti_arc_move_radius_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double Arc_Radius, UInt16 Arc_Dir, Int32 Circle, UInt16 posi_mode, Int32 mark);
         //连续插补3点圆弧插补（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_arc_move_3points_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_arc_move_3points_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double[] Mid_Pos, Int32 Circle, UInt16 posi_mode, Int32 mark);     
+        public static extern short dmc_conti_arc_move_3points_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] Target_Pos, double[] Mid_Pos, Int32 Circle, UInt16 posi_mode, Int32 mark);
         //连续插补矩形插补（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_rectangle_move_unit", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_conti_rectangle_move_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] TargetPos, double[] MaskPos, Int32 Count, UInt16 rect_mode, UInt16 posi_mode, Int32 mark);     
+        public static extern short dmc_conti_rectangle_move_unit(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] TargetPos, double[] MaskPos, Int32 Count, UInt16 rect_mode, UInt16 posi_mode, Int32 mark);
         //设置螺旋线插补运动模式（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_set_involute_mode", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_conti_set_involute_mode(UInt16 CardNo, UInt16 Crd, UInt16 mode);      //设置螺旋线是否封闭
@@ -1188,7 +1188,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_gear_follow_profile(UInt16 CardNo, UInt16 axis, UInt16 enable, UInt16 master_axis, double ratio);//双Z轴
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_gear_follow_profile(UInt16 CardNo, UInt16 axis, ref UInt16 enable, ref UInt16 master_axis, ref double ratio);
-              
+
         //--------------------PWM控制----------------------
         //PWM控制（备用）
         [DllImport("LTDMC.dll")]
@@ -1204,7 +1204,7 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_pwm_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_set_pwm_output(UInt16 CardNo, UInt16 pwm_no, double fDuty, double fFre);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_pwm_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_get_pwm_output(UInt16 CardNo, UInt16 pwm_no, ref double fDuty, ref double fFre);        
+        public static extern short dmc_get_pwm_output(UInt16 CardNo, UInt16 pwm_no, ref double fDuty, ref double fFre);
         //连续插补PWM输出（适用于DMC5000/5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_conti_set_pwm_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_conti_set_pwm_output(UInt16 CardNo, UInt16 Crd, UInt16 pwm_no, double fDuty, double fFre);
@@ -1236,12 +1236,12 @@ namespace MotionControl //命名空间根据应用程序修改
         //--------------------ADDA输出----------------------
         //控制卡接线盒DA输出，设置DA输出使能（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_da_enable", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_set_da_enable(UInt16 CardNo, UInt16 enable);      
+        public static extern short dmc_set_da_enable(UInt16 CardNo, UInt16 enable);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_da_enable", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_get_da_enable(UInt16 CardNo, ref UInt16 enable);
         //设置DA输出（适用于所有脉冲卡）
         [DllImport("LTDMC.dll", EntryPoint = "dmc_set_da_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-        public static extern short dmc_set_da_output(UInt16 CardNo, UInt16 channel, double Vout);   
+        public static extern short dmc_set_da_output(UInt16 CardNo, UInt16 channel, double Vout);
         [DllImport("LTDMC.dll", EntryPoint = "dmc_get_da_output", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short dmc_get_da_output(UInt16 CardNo, UInt16 channel, ref double Vout);
         //控制卡接线盒AD输入，读取AD输入（适用于所有脉冲卡）
@@ -1384,7 +1384,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_get_leadscrew_comp_config(UInt16 CardNo, UInt16 axis, ref UInt16 n, ref int startpos, ref int lenpos, int[] pCompPos, int[] pCompNeg);
         //配置逻辑补偿参数（当量）（适用于DMC5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_leadscrew_comp_config_unit(UInt16 CardNo, UInt16 axis, UInt16 n, double startpos, double lenpos, double[] pCompPos, double[] pCompNeg);       
+        public static extern short dmc_set_leadscrew_comp_config_unit(UInt16 CardNo, UInt16 axis, UInt16 n, double startpos, double lenpos, double[] pCompPos, double[] pCompNeg);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_leadscrew_comp_config_unit(UInt16 CardNo, UInt16 axis, ref UInt16 n, ref double startpos, ref double lenpos, double[] pCompPos, double[] pCompNeg);
         //螺距补偿前的脉冲位置，编码器位置//20191025（适用于DMC3000系列脉冲卡）
@@ -1425,7 +1425,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_encoder_count_error_action_config(UInt16 CardNo, UInt16 enable, UInt16 stopmode);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_encoder_count_error_action_config(UInt16 CardNo, ref UInt16 enable, ref UInt16 stopmode);
-        
+
         //新物件分拣功能 分拣固件专用
         [DllImport("LTDMC.dll")]
         public static extern short dmc_sorting_close(UInt16 CardNo);
@@ -1459,7 +1459,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_sorting_set_cam_trig_phase(UInt16 CardNo, UInt16 blowNo, double coef);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_sorting_set_blow_trig_phase(UInt16 CardNo, UInt16 blowNo, double coef);
-        
+
         //内部使用（保留）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_sevon_enable(UInt16 CardNo, UInt16 axis, UInt16 on_off);
@@ -1497,9 +1497,9 @@ namespace MotionControl //命名空间根据应用程序修改
 
         //IO及编码器计数功能（保留）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_io_count_profile(UInt16 CardNo, UInt16 chan, UInt16 bitno,UInt16 mode,double filter, double count_value, UInt16[] axis_list, UInt16 axis_num, UInt16 stop_mode );
+        public static extern short dmc_set_io_count_profile(UInt16 CardNo, UInt16 chan, UInt16 bitno, UInt16 mode, double filter, double count_value, UInt16[] axis_list, UInt16 axis_num, UInt16 stop_mode);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_io_count_profile(UInt16 CardNo, UInt16 chan, ref UInt16 bitno,ref UInt16 mode,ref double filter, ref double count_value, UInt16[] axis_list, ref UInt16 axis_num, ref UInt16 stop_mode );
+        public static extern short dmc_get_io_count_profile(UInt16 CardNo, UInt16 chan, ref UInt16 bitno, ref UInt16 mode, ref double filter, ref double count_value, UInt16[] axis_list, ref UInt16 axis_num, ref UInt16 stop_mode);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_io_count_enable(UInt16 CardNo, UInt16 chan, UInt16 ifenable);
         [DllImport("LTDMC.dll")]
@@ -1508,12 +1508,12 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_get_io_count_value_extern(UInt16 CardNo, UInt16 chan, ref Int32 current_value);
         //保留
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_change_speed_extend(UInt16 CardNo,UInt16 axis,double Curr_Vel, double Taccdec, UInt16 pin_num, UInt16 trig_mode);
+        public static extern short dmc_change_speed_extend(UInt16 CardNo, UInt16 axis, double Curr_Vel, double Taccdec, UInt16 pin_num, UInt16 trig_mode);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_follow_vector_speed_move(UInt16 CardNo,UInt16 axis,UInt16 Follow_AxisNum,UInt16[] Follow_AxisList,double ratio);
+        public static extern short dmc_follow_vector_speed_move(UInt16 CardNo, UInt16 axis, UInt16 Follow_AxisNum, UInt16[] Follow_AxisList, double ratio);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_conti_line_unit_extend(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] pPosList, UInt16 posi_mode, double Extend_Len, UInt16 enable,Int32 mark); //连续插补直线
-     
+        public static extern short dmc_conti_line_unit_extend(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] pPosList, UInt16 posi_mode, double Extend_Len, UInt16 enable, Int32 mark); //连续插补直线
+
         //总线参数
         [DllImport("LTDMC.dll", EntryPoint = "nmc_download_configfile", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
         public static extern short nmc_download_configfile(UInt16 CardNo, UInt16 PortNum, String FileName);//总线ENI配置文件
@@ -1577,7 +1577,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short nmc_set_alarm_clear(ushort CardNo, ushort PortNum, ushort nodenum);
         [DllImport("LTDMC.dll")]
         public static extern short nmc_get_slave_nodes(ushort CardNo, ushort PortNum, ushort BaudRate, ref ushort NodeId, ref ushort NodeNum);
-        
+
         //轴状态机
         [DllImport("LTDMC.dll")]
         public static extern short nmc_get_axis_state_machine(ushort CardNo, ushort axis, ref ushort Axis_StateMachine);
@@ -1735,7 +1735,7 @@ namespace MotionControl //命名空间根据应用程序修改
         //读取io输入
         [DllImport("LTDMC.dll")]
         public static extern short nmc_read_inbit_extern(UInt16 CardNo, UInt16 Channel, UInt16 NoteID, UInt16 IoBit, ref UInt16 IoValue);
-        
+
         //返回最近错误码
         [DllImport("LTDMC.dll")]
         public static extern short nmc_get_current_fieldbus_state_info(UInt16 CardNo, UInt16 Channel, ref UInt16 Axis, ref UInt16 ErrorType, ref UInt16 SlaveAddr, ref UInt32 ErrorFieldbusCode);
@@ -1794,7 +1794,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short nmc_get_torque(UInt16 CardNo, UInt16 axis, ref int Torque);
         //modbus函数
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_modbus_active_COM1(UInt16 id, string COMID,int speed, int bits, int check, int stop);
+        public static extern short dmc_modbus_active_COM1(UInt16 id, string COMID, int speed, int bits, int check, int stop);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_modbus_active_COM2(UInt16 id, string COMID, int speed, int bits, int check, int stop);
         [DllImport("LTDMC.dll")]
@@ -1819,16 +1819,16 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_get_modbus_4x_int(UInt16 CardNo, UInt16 start, UInt16 inum, int[] pdata);
         //保留
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_conti_line_io_union(UInt16 CardNo,UInt16 Crd,UInt16 AxisNum,UInt16[] AxisList,double[] pPosList,UInt16 posi_mode,UInt16 bitno,UInt16 on_off,double io_value,UInt16 io_mode,UInt16 MapAxis,UInt16 pos_source,double ReverseTime,long mark);
+        public static extern short dmc_conti_line_io_union(UInt16 CardNo, UInt16 Crd, UInt16 AxisNum, UInt16[] AxisList, double[] pPosList, UInt16 posi_mode, UInt16 bitno, UInt16 on_off, double io_value, UInt16 io_mode, UInt16 MapAxis, UInt16 pos_source, double ReverseTime, long mark);
         //设置编码器方向（适用于DMC3000系列脉冲卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_encoder_dir(UInt16 CardNo, UInt16 axis,UInt16 dir);
-        
+        public static extern short dmc_set_encoder_dir(UInt16 CardNo, UInt16 axis, UInt16 dir);
+
         //圆弧区域软限位（适用于DMC3000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_arc_zone_limit_config(UInt16 CardNo, UInt16[] AxisList, UInt16 AxisNum, double[] Center, double Radius, UInt16 Source,UInt16 StopMode);
+        public static extern short dmc_set_arc_zone_limit_config(UInt16 CardNo, UInt16[] AxisList, UInt16 AxisNum, double[] Center, double Radius, UInt16 Source, UInt16 StopMode);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_arc_zone_limit_config(UInt16 CardNo, UInt16[] AxisList, ref UInt16 AxisNum, double[] Center, ref double Radius, ref UInt16 Source,ref UInt16 StopMode);
+        public static extern short dmc_get_arc_zone_limit_config(UInt16 CardNo, UInt16[] AxisList, ref UInt16 AxisNum, double[] Center, ref double Radius, ref UInt16 Source, ref UInt16 StopMode);
         //圆形区域软限位unit（适用于DMC5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_arc_zone_limit_config_unit(ushort CardNo, ushort[] AxisList, ushort AxisNum, double[] Center, double Radius, ushort Source, ushort StopMode);
@@ -1842,7 +1842,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_set_arc_zone_limit_enable(UInt16 CardNo, UInt16 enable);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_arc_zone_limit_enable(UInt16 CardNo, ref UInt16 enable);
-        
+
         //控制卡接线盒断线后是否初始化输出电平
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_output_status_repower(UInt16 CardNo, UInt16 enable);
@@ -1852,7 +1852,7 @@ namespace MotionControl //命名空间根据应用程序修改
         //保留
         [DllImport("LTDMC.dll")]
         public static extern short dmc_compare_add_point_XD(UInt16 CardNo, UInt16 cmp, long pos, UInt16 dir, UInt16 action, UInt32 actpara, long startPos);//硒电定制比较函数
-        
+
         //---------------------------ORG输入触发在线变速变位----------------------
         //配置ORG输入触发在线变速变位（适用于DMC3000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
@@ -1946,7 +1946,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_hcmp_set_config_overlap(UInt16 CardNo, UInt16 hcmp, UInt16 axis, UInt16 cmp_source, UInt16 cmp_logic, Int32 time, UInt16 axis_num, UInt16 aux_axis, UInt16 aux_source);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_hcmp_get_config_overlap(UInt16 CardNo, UInt16 hcmp, ref UInt16 axis, ref UInt16 cmp_source, ref UInt16 cmp_logic, ref Int32 time, ref UInt16 axis_num, ref UInt16 aux_axis, ref UInt16 aux_source);
-        
+
         //启动或者关闭RTCP功能,后续添加
 
         //螺旋插补(测试使用，DMC5000/5X10系列脉冲卡、E5032总线卡)
@@ -1963,9 +1963,9 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll")]
         public static extern short dmc_pdo_buffer_clear(UInt16 CardNo, UInt16 axis);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_pdo_buffer_run_state(UInt16 CardNo,UInt16 axis, ref int RunState, ref int Remain, ref int NotRunned, ref int Runned);
+        public static extern short dmc_pdo_buffer_run_state(UInt16 CardNo, UInt16 axis, ref int RunState, ref int Remain, ref int NotRunned, ref int Runned);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_pdo_buffer_add_data(UInt16 CardNo,UInt16 axis, int size, int[] data_table);       
+        public static extern short dmc_pdo_buffer_add_data(UInt16 CardNo, UInt16 axis, int size, int[] data_table);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_pdo_buffer_start_multi(UInt16 CardNo, UInt16 AxisNum, UInt16[] AxisList, UInt16[] ResultList);
         [DllImport("LTDMC.dll")]
@@ -2073,7 +2073,7 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern short dmc_axis_conflict_config_en(ushort CardNo, ushort enable);
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_axis_conflict_config_en(ushort CardNo, ref ushort enable);
-       
+
         //物件分拣加通道,分拣固件专用
         [DllImport("LTDMC.dll")]
         public static extern short dmc_sorting_close_ex(ushort CardNo, ushort sortModuleNo);
@@ -2119,7 +2119,7 @@ namespace MotionControl //命名空间根据应用程序修改
 
         // 椭圆连续插补（适用于DMC5X10系列脉冲卡、E5032总线卡）
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_conti_ellipse_move_unit(ushort CardNo, ushort Crd,ushort AxisNum, ushort[] AxisList, double[] Target_Pos, double[] Cen_Pos, double A_Axis_Len, double B_Axis_Len, ushort Dir, ushort Pos_Mode,long mark);
+        public static extern short dmc_conti_ellipse_move_unit(ushort CardNo, ushort Crd, ushort AxisNum, ushort[] AxisList, double[] Target_Pos, double[] Cen_Pos, double A_Axis_Len, double B_Axis_Len, ushort Dir, ushort Pos_Mode, long mark);
         //获取轴状态函数（预留）
         [DllImport("LTDMC.dll")]
         public static extern short dmc_get_axis_status_advance(ushort CardNo, ushort axis_no, ushort motion_no, ref ushort axis_plan_state, ref UInt32 ErrPlulseCnt, ref ushort fpga_busy);
@@ -2160,7 +2160,7 @@ namespace MotionControl //命名空间根据应用程序修改
         [DllImport("LTDMC.dll")]
         public static extern short dmc_set_persistent_param_config(ushort CardNo, ushort axis, uint item);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_persistent_param_config(ushort CardNo, ushort axis, ref uint item);               
+        public static extern short dmc_get_persistent_param_config(ushort CardNo, ushort axis, ref uint item);
 
         //读取运行时是启动正常固件还是备份固件（适用于DMC3000/5000/5X10系列脉冲卡）
         [DllImport("LTDMC.dll")]
@@ -2175,17 +2175,17 @@ namespace MotionControl //命名空间根据应用程序修改
         public static extern uint dmc_int_disable(ushort CardNo);
         //设置/读取指定控制卡中断通道使能
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_intmode_enable(ushort Cardno,ushort Intno,ushort Enable);
+        public static extern short dmc_set_intmode_enable(ushort Cardno, ushort Intno, ushort Enable);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_intmode_enable(ushort Cardno,ushort Intno,ref ushort Status);
+        public static extern short dmc_get_intmode_enable(ushort Cardno, ushort Intno, ref ushort Status);
         //设置/读取指定控制卡中断配置
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_set_intmode_config(ushort Cardno,ushort Intno,ushort IntItem,ushort IntIndex,ushort IntSubIndex,ushort Logic);
+        public static extern short dmc_set_intmode_config(ushort Cardno, ushort Intno, ushort IntItem, ushort IntIndex, ushort IntSubIndex, ushort Logic);
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_intmode_config(ushort Cardno,ushort Intno,ref ushort IntItem,ref ushort IntIndex,ref ushort IntSubIndex,ref ushort Logic);
+        public static extern short dmc_get_intmode_config(ushort Cardno, ushort Intno, ref ushort IntItem, ref ushort IntIndex, ref ushort IntSubIndex, ref ushort Logic);
         //读取指定控制卡中断通道的中断状态
         [DllImport("LTDMC.dll")]
-        public static extern short dmc_get_int_status(ushort Cardno,ref uint IntStatus);
+        public static extern short dmc_get_int_status(ushort Cardno, ref uint IntStatus);
         //复位指定控制卡输入口的中断
         [DllImport("LTDMC.dll")]
         public static extern short dmc_reset_int_status(ushort Cardno, ushort Intno);
