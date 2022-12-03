@@ -9,6 +9,38 @@ namespace MotionControl
     internal interface IControlBaseInterface
     {
         /// <summary>
+        /// 总线状态数组
+        /// <para>int[0]==总线扫描周期</para>
+        /// <para>int[1]==总线状态，Value=0为总线正常</para>
+        /// </summary>
+        int[] EtherCATStates { get; set; }
+
+        /// <summary>
+        /// 轴状态信息获取 double[][] 一维索引代表轴号，二维索引注释如下
+        ///<para>double[][0]= 脉冲位置</para>
+        ///<para>double[][1]= 伺服编码器位置</para>
+        ///<para>double[][2]= 速度</para>
+        ///<para>double[][3]= 目标位置</para>
+        ///<para>double[][4]= 轴运动到位 0=运动中 1=轴停止</para>
+        ///<para>double[][5]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态</para>
+        ///<para>double[][6]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue</para>
+        ///<para>double[][7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止 10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止</para>
+        /// </summary>
+        double[][] AxisStates { get; set; }
+
+        /// <summary>
+        /// 轴专用IO int[][] 一维索引代表轴号，二维索引注释如下
+        ///<para>int[][0]=伺服报警</para> 
+        ///<para>int[][1]=正限位</para> 
+        ///<para>int[][2]=负限位</para> 
+        ///<para>int[][3]=急停</para> 
+        ///<para>int[][4]=原点</para> 
+        ///<para>int[][5]=正软限位</para> 
+        ///<para>int[][6]=负软限位</para> 
+        /// </summary>
+        int[][] Axis_IO { get; set; }
+
+        /// <summary>
         /// 数字io输入
         /// </summary>
         bool[] IO_Input { get; set; }
@@ -21,7 +53,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡号
         /// </summary>
-        short Card_Number { get; set; }
+        ushort[] Card_Number { get; set; }
 
         /// <summary>
         /// 轴号
@@ -182,8 +214,16 @@ namespace MotionControl
         /// 获取轴专用IO
         /// </summary>
         /// <param name="axis">轴号</param>
-        /// <returns></returns>
-        bool[] GetAxisExternalio(ushort axis);
+        /// <returns>
+        /// <param> bool[0]==伺服报警(True=ON)</param>
+        /// <param> bool[1]==正限位(True=ON)</param>
+        /// <param> bool[2]==负限位(True=ON)</param>
+        /// <param> bool[3]==急停(True=ON)</param>
+        /// <param> bool[4]==原点(True=ON)</param>
+        /// <param> bool[5]==正软限位(True=ON)</param>
+        /// <param> bool[6]==负软限位(True=ON)</param>
+        /// </returns>
+        int[] GetAxisExternalio(ushort axis);
 
         /// <summary>
         /// 获取板卡全部数字输入
@@ -233,5 +273,28 @@ namespace MotionControl
         /// <param name="reset">0=热复位 1=冷复位 2=初始复位</param>
         void ResetCard(ushort card, ushort reset);
 
+        /// <summary>
+        /// 单轴原点回归
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <param name="home_model">回零方式</param>
+        /// <param name="home_speed">回零速度</param>
+        /// <param name="timeout">动作超时时间</param>
+        /// <param name="acc">回零加速度</param>
+        /// <param name="dcc">回零减速度</param>
+        /// <param name="offpos">零点偏移</param>
+        void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+
+        /// <summary>
+        /// 单轴阻塞原点回归
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        /// <param name="home_model">回零方式</param>
+        /// <param name="home_speed">回零速度</param>
+        /// <param name="timeout">等待超时时间</param>
+        /// <param name="acc">回零加速度</param>
+        /// <param name="dcc">回零减速度</param>
+        /// <param name="offpos">零点偏移</param>
+        void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
     }
 }

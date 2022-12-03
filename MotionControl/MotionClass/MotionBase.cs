@@ -11,27 +11,33 @@ namespace MotionControl
 {
     public abstract class MotionBase : IControlBaseInterface
     {
-        public static MotionBase thismotion { get; set; }
+        /// <summary>
+        /// 运动控制类实例对象
+        /// </summary>
+        public static MotionBase Thismotion { get; set; }
         /// <inheritdoc/>
         public abstract bool[] IO_Input { get; set; }
         /// <inheritdoc/>
         public abstract bool[] IO_Output { get; set; }
         /// <inheritdoc/>
-        public abstract short Card_Number { get; set; }
+        public abstract ushort[] Card_Number { get; set; }
         /// <inheritdoc/>
         public abstract ushort[] Axis { get; set; }
+        /// <inheritdoc/>
+        public abstract int[] EtherCATStates { get; set; }
+        /// <inheritdoc/>
         public abstract double[][] AxisStates { get; set; }
+        /// <summary>
+        /// 输入输出高低电平反转
+        /// </summary>
         public virtual bool LevelSignal { get; set; }
         /// <inheritdoc/>
         public abstract Thread Read_t1 { get; set; }
         /// <inheritdoc/>
-
         public abstract ManualResetEvent AutoReadEvent { get; set; }
         /// <inheritdoc/>
-
         public abstract event Action<DateTime, string> CardLogEvent;
         /// <inheritdoc/>
-
         public virtual event Action<object, string> CardErrorMessageEvent;
 
         /// <summary>
@@ -40,26 +46,9 @@ namespace MotionControl
         public struct MoveState
         {
             /// <summary>
-            /// 轴定位状态
+            /// 卡号
             /// </summary>
-            /// <param name="axis">定位轴号</param>
-            /// <param name="cpos">定位前位置</param>
-            /// <param name="pos">定位目标位置</param>
-            /// <param name="move">定位方式</param>
-            /// <param name="sp">定位速度</param>
-            /// <param name="outtime">等待超时时间</param>
-            /// <param name="handel">对象句柄</param>
-            public MoveState(byte axis, double cpos, double pos, byte move, double sp, int outtime, DateTime handel)
-            {
-                CurrentPosition = cpos;
-                Position = pos;
-                Movetype = move;
-                Speed = sp;
-                Axis = axis;
-                OutTime = outtime;
-                Handle = handel;
-            }
-
+            public ushort CardID { get; set; }
             /// <summary>
             /// 定位前位置
             /// </summary>
@@ -80,6 +69,22 @@ namespace MotionControl
             /// 定位轴号
             /// </summary>
             public ushort Axis { get; set; }
+            /// <summary>
+            /// 原点回归模式
+            /// </summary>
+            public ushort HomeModel { get; set; }
+            /// <summary>
+            /// 加速度
+            /// </summary>
+            public double ACC { get; set; }
+            /// <summary>
+            /// 减速度
+            /// </summary>
+            public double Dcc { get; set; }
+            /// <summary>
+            /// 零点偏置
+            /// </summary>
+            public double Home_off { get; set; }
             /// <summary>
             /// 等待超时时间（ms）
             /// </summary>
@@ -128,6 +133,9 @@ namespace MotionControl
         /// 减速度
         /// </summary>
         public abstract double Dec { get; set; }
+        /// <inheritdoc/>
+        public abstract int[][] Axis_IO { get; set; }
+
 
         /// <summary>
         /// 获取板卡对象
@@ -171,7 +179,6 @@ namespace MotionControl
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
                 throw new Exception("type:" + data);
-                return false;
             }
             else
             {
@@ -199,7 +206,7 @@ namespace MotionControl
         /// <inheritdoc/>
         public abstract double[] GetAxisState(ushort axis);
         /// <inheritdoc/>
-        public abstract bool[] GetAxisExternalio(ushort axis);
+        public abstract int[] GetAxisExternalio(ushort axis);
         /// <inheritdoc/>
         public abstract void MoveReset(ushort axis);
         /// <inheritdoc/>
@@ -220,6 +227,9 @@ namespace MotionControl
         public abstract int[] GetEtherCATState(ushort card_number);
         /// <inheritdoc/>
         public abstract void ResetCard(ushort card, ushort reset);
-
+        /// <inheritdoc/>
+        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        /// <inheritdoc/>
+        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
     }
 }

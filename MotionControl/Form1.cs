@@ -115,13 +115,13 @@ namespace MotionControl
         {
             //motion.MoveAbs(0, 1000, 10000);
             
-            motion.MoveAbs((ushort)LeiSai.CardOne.X, 10000, 10000, 100000);
+            motion.MoveAbs((ushort)LeiSai.CardOne.X, 10000, 10000, 0);
 
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            motion.MoveRel(0, 100000, 10000,30000);
+            motion.MoveRel(0, 100000, 10000,0);
         }
 
         private void button7_Click(object sender, EventArgs e)
