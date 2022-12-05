@@ -200,9 +200,9 @@ namespace MotionControl
         /// <inheritdoc/>
         public abstract void AxisStop(ushort axis, int stop_mode, bool all);
         /// <inheritdoc/>
-        public abstract void MoveAbs(ushort axis, double position, double speed, int time);
+        public abstract void MoveAbs(ushort axis, double position, double speed, int time=0);
         /// <inheritdoc/>
-        public abstract void MoveRel(ushort axis, double position, double speed, int time);
+        public abstract void MoveRel(ushort axis, double position, double speed, int time=0);
         /// <inheritdoc/>
         public abstract double[] GetAxisState(ushort axis);
         /// <inheritdoc/>
@@ -210,9 +210,9 @@ namespace MotionControl
         /// <inheritdoc/>
         public abstract void MoveReset(ushort axis);
         /// <inheritdoc/>
-        public abstract void AwaitMoveAbs(ushort axis, double position, double speed, int time = 3000);
+        public abstract void AwaitMoveAbs(ushort axis, double position, double speed, int time = 0);
         /// <inheritdoc/>
-        public abstract void AwaitMoveRel(ushort axis, double position, double speed, int time = 3000);
+        public abstract void AwaitMoveRel(ushort axis, double position, double speed, int time = 0);
         /// <inheritdoc/>
         public abstract bool[] Getall_IOinput(ushort card);
         /// <inheritdoc/>
@@ -220,7 +220,7 @@ namespace MotionControl
         /// <inheritdoc/>
         public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
         /// <inheritdoc/>
-        public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 3000);
+        public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0);
         /// <inheritdoc/>
         public abstract void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
         /// <inheritdoc/>
@@ -228,8 +228,8 @@ namespace MotionControl
         /// <inheritdoc/>
         public abstract void ResetCard(ushort card, ushort reset);
         /// <inheritdoc/>
-        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout=0 , double acc = 0.5, double dcc = 0.5, double offpos = 0);
         /// <inheritdoc/>
-        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout=0 , double acc = 0.5, double dcc = 0.5, double offpos = 0);
     }
 }

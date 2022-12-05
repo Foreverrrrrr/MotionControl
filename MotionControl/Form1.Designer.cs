@@ -57,6 +57,8 @@ namespace MotionControl
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button11 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -105,9 +107,9 @@ namespace MotionControl
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(205, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 4;
-            this.label1.Text = "轴运动状态";
+            this.label1.Text = "运动到位";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // textBox1
@@ -261,7 +263,7 @@ namespace MotionControl
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(644, 90);
+            this.textBox7.Location = new System.Drawing.Point(676, 12);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 21);
             this.textBox7.TabIndex = 21;
@@ -280,7 +282,7 @@ namespace MotionControl
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 12;
-            this.listBox1.Location = new System.Drawing.Point(4, 141);
+            this.listBox1.Location = new System.Drawing.Point(-4, 134);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(465, 304);
             this.listBox1.TabIndex = 23;
@@ -305,11 +307,32 @@ namespace MotionControl
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(730, 192);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(75, 23);
+            this.button13.TabIndex = 26;
+            this.button13.Text = "原点回归";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(605, 15);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 12);
+            this.label7.TabIndex = 27;
+            this.label7.Text = "轴停止原因";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(856, 450);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.button13);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button11);
             this.Controls.Add(this.listBox1);
@@ -373,6 +396,8 @@ namespace MotionControl
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button13;
+        private System.Windows.Forms.Label label7;
     }
 }
 

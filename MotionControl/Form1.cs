@@ -88,12 +88,12 @@ namespace MotionControl
         private void timer1_Tick(object sender, EventArgs e)
         {
             textBox1.Text = motion.AxisStates[0][4].ToString();
-            textBox2.Text = motion.AxisStates[0][5].ToString();
+            textBox2.Text = motion.AxisStates[0][6].ToString();
             textBox3.Text = motion.AxisStates[0][1].ToString();
             textBox4.Text = motion.AxisStates[0][0].ToString();
-            textBox5.Text = motion.AxisStates[0][2].ToString();
-            textBox6.Text = motion.AxisStates[0][3].ToString();
-            textBox7.Text = motion.AxisStates[0][6].ToString();
+            textBox5.Text = motion.AxisStates[0][3].ToString();
+            textBox6.Text = motion.AxisStates[0][2].ToString();
+            textBox7.Text = motion.AxisStates[0][7].ToString();
         }
 
         private void button3_MouseUp(object sender, MouseEventArgs e)
@@ -154,6 +154,11 @@ namespace MotionControl
         private void button12_Click(object sender, EventArgs e)
         {
             motion.AwaitMoveRel(0, 10000, 10000, 0);
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            motion.MoveHome(0, 27, 10000);
         }
     }
 }
