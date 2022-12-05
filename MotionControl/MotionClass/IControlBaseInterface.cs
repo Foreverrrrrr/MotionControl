@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace MotionControl
 {
+    /// <summary>
+    /// 运动控制接口
+    /// </summary>
     internal interface IControlBaseInterface
     {
         /// <summary>
@@ -28,6 +31,17 @@ namespace MotionControl
         ///<para>double[][7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止 10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止</para>
         /// </summary>
         double[][] AxisStates { get; set; }
+
+        /// <summary>
+        /// 插补坐标系状态
+        /// <para>short[0] 一维索引为坐标系号</para>
+        /// <para>short[]= 0 坐标系运动中</para>
+        /// <para>short[]= 1 暂停中</para>
+        /// <para>short[]= 2 正常停止</para>
+        /// <para>short[]= 3 已被占用但未启动</para>
+        /// <para>short[]= 4 坐标系空闲</para>
+        /// </summary>
+        short[] CoordinateSystemStates { get; set; }
 
         /// <summary>
         /// 轴专用IO int[][] 一维索引代表轴号，二维索引注释如下
@@ -321,10 +335,6 @@ namespace MotionControl
         /// </summary>
         void SetAxis_iniFile();
 
-        /// <summary>
-        /// 设置EtherCAT总线配置文件
-        /// </summary>
         void SetEtherCAT_eniFiel();
-      
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 
 
 namespace MotionControl
 {
+    /// <summary>
+    /// 运动控制接口
+    /// </summary>
     internal interface IControlBaseInterface
     {
         /// <summary>
@@ -27,6 +31,17 @@ namespace MotionControl
         ///<para>double[][7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止 10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止</para>
         /// </summary>
         double[][] AxisStates { get; set; }
+
+        /// <summary>
+        /// 插补坐标系状态
+        /// <para>short[0] 一维索引为坐标系号</para>
+        /// <para>short[]= 0 坐标系运动中</para>
+        /// <para>short[]= 1 暂停中</para>
+        /// <para>short[]= 2 正常停止</para>
+        /// <para>short[]= 3 已被占用但未启动</para>
+        /// <para>short[]= 4 坐标系空闲</para>
+        /// </summary>
+        short[] CoordinateSystemStates { get; set; }
 
         /// <summary>
         /// 轴专用IO int[][] 一维索引代表轴号，二维索引注释如下
@@ -297,5 +312,29 @@ namespace MotionControl
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
         void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+
+        /// <summary>
+        /// 设置伺服对象字典
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="etherCATLocation">设置从站ID</param>
+        /// <param name="primeindex">主索引</param>
+        /// <param name="wordindexing">子索引</param>
+        /// <param name="bitlength">索引长度</param>
+        /// <param name="value">设置值</param>
+        void SetbjectDictionary(ushort card, ushort etherCATLocation,ushort primeindex,ushort wordindexing,ushort bitlength,int value);
+
+        /// <summary>
+        /// 总线轴错误复位
+        /// </summary>
+        /// <param name="axis"></param>
+        void AxisErrorReset(ushort axis);
+
+        /// <summary>
+        /// 设置板卡轴配置文件
+        /// </summary>
+        void SetAxis_iniFile();
+
+        void SetEtherCAT_eniFiel();
     }
 }

@@ -18,6 +18,7 @@ namespace MotionControl
         public Form1()
         {
             InitializeComponent();
+
             motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
             motion.FactorValue = 20;
             motion.CardErrorMessageEvent += (i, message) =>
@@ -115,7 +116,7 @@ namespace MotionControl
         {
             //motion.MoveAbs(0, 1000, 10000);
             
-            motion.MoveAbs((ushort)LeiSai.CardOne.X, 10000, 10000, 0);
+            motion.MoveAbs(0, 10000, 10000, 0);
 
         }
 
