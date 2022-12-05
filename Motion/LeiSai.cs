@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MotionControl
 {
@@ -60,7 +59,6 @@ namespace MotionControl
             Y2,
             Y3,
             Y4
-
         }
         public enum CardTwo
         {
@@ -693,7 +691,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveAbs(ushort axis, double position, double speed, int time)
+        public override void MoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -769,7 +767,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveRel(ushort axis, double position, double speed, int time)
+        public override void MoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -927,7 +925,7 @@ namespace MotionControl
 
 
         /// <inheritdoc/>
-        public override void AwaitMoveAbs(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -1001,7 +999,7 @@ namespace MotionControl
 
 
         /// <inheritdoc/>
-        public override void AwaitMoveRel(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -1135,7 +1133,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout)
+        public override void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0)
         {
             if (IO_Input != null)
             {
@@ -1243,7 +1241,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (AxisStates == null)
             {
@@ -1324,7 +1322,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (AxisStates == null)
             {

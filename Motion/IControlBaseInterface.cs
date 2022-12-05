@@ -19,8 +19,8 @@ namespace MotionControl
         /// 轴状态信息获取 double[][] 一维索引代表轴号，二维索引注释如下
         ///<para>double[][0]= 脉冲位置</para>
         ///<para>double[][1]= 伺服编码器位置</para>
-        ///<para>double[][2]= 速度</para>
-        ///<para>double[][3]= 目标位置</para>
+        ///<para>double[][2]= 目标位置</para>
+        ///<para>double[][3]= 速度</para>
         ///<para>double[][4]= 轴运动到位 0=运动中 1=轴停止</para>
         ///<para>double[][5]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态</para>
         ///<para>double[][6]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue</para>
@@ -157,7 +157,8 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        void MoveAbs(ushort axis, double position, double speed, int time);
+        ///  <param name="time">超时时间</param>
+        void MoveAbs(ushort axis, double position, double speed, int time=0);
 
         /// <summary>
         /// 单轴相对定位（非阻塞模式，调用该方法后需要自行处理是否运动完成）
@@ -165,8 +166,8 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         /// <param name="position">定位地址</param>
         /// <param name="speed">定位速度</param>
-        /// 
-        void MoveRel(ushort axis, double position, double speed, int time);
+        /// <param name="time">超时时间</param>
+        void MoveRel(ushort axis, double position, double speed, int time=0);
 
         /// <summary>
         /// 单轴绝对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
@@ -175,7 +176,7 @@ namespace MotionControl
         /// <param name="position">绝对地址</param>
         /// <param name="speed">定位速度</param>
         /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
-        void AwaitMoveAbs(ushort axis, double position, double speed, int time);
+        void AwaitMoveAbs(ushort axis, double position, double speed, int time=0);
 
         /// <summary>
         /// 单轴相对定位（阻塞模式，调用该方法后定位运动完成后或超时返回）
@@ -184,7 +185,7 @@ namespace MotionControl
         /// <param name="position">相对地址</param>
         /// <param name="speed">定位速度</param>
         /// <param name="time">等待超时时长：0=一直等待直到定位完成</param>
-        void AwaitMoveRel(ushort axis, double position, double speed, int time);
+        void AwaitMoveRel(ushort axis, double position, double speed, int time=0);
 
         /// <summary>
         /// 读取总线状态
@@ -254,7 +255,7 @@ namespace MotionControl
         /// <param name="indexes">输入口</param>
         /// <param name="waitvalue">等待状态</param>
         /// <param name="timeout">等待超时时间</param>
-        void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout);
+        void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout=0);
 
         /// <summary>
         /// 外部IO单按钮触发事件设置
@@ -283,7 +284,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
 
         /// <summary>
         /// 单轴阻塞原点回归
@@ -295,6 +296,6 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
     }
 }

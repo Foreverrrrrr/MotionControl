@@ -231,5 +231,13 @@ namespace MotionControl
         public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout=0 , double acc = 0.5, double dcc = 0.5, double offpos = 0);
         /// <inheritdoc/>
         public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout=0 , double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        /// <inheritdoc/>
+        public abstract void SetbjectDictionary(ushort card, ushort etherCATLocation, ushort primeindex, ushort wordindexing, ushort bitlength, int value);
+        /// <inheritdoc/>
+        public abstract void AxisErrorReset(ushort axis);
+        /// <inheritdoc/>
+        public abstract void SetAxis_iniFile();
+        /// <inheritdoc/>
+        public abstract void SetEtherCAT_eniFiel();
     }
 }

@@ -91,8 +91,8 @@ namespace MotionControl
             textBox2.Text = motion.AxisStates[0][6].ToString();
             textBox3.Text = motion.AxisStates[0][1].ToString();
             textBox4.Text = motion.AxisStates[0][0].ToString();
-            textBox5.Text = motion.AxisStates[0][3].ToString();
-            textBox6.Text = motion.AxisStates[0][2].ToString();
+            textBox5.Text = motion.AxisStates[0][2].ToString();
+            textBox6.Text = motion.AxisStates[0][3].ToString();
             textBox7.Text = motion.AxisStates[0][7].ToString();
         }
 

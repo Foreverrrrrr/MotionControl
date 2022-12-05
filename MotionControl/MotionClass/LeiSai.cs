@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MotionControl
 {
@@ -693,7 +694,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveAbs(ushort axis, double position, double speed, int time)
+        public override void MoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -769,7 +770,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveRel(ushort axis, double position, double speed, int time)
+        public override void MoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -927,7 +928,7 @@ namespace MotionControl
 
 
         /// <inheritdoc/>
-        public override void AwaitMoveAbs(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -1001,7 +1002,7 @@ namespace MotionControl
 
 
         /// <inheritdoc/>
-        public override void AwaitMoveRel(ushort axis, double position, double speed, int time)
+        public override void AwaitMoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (AxisStates == null)
             {
@@ -1135,7 +1136,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout)
+        public override void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0)
         {
             if (IO_Input != null)
             {
@@ -1243,7 +1244,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (AxisStates == null)
             {
@@ -1324,7 +1325,7 @@ namespace MotionControl
         }
 
         /// <inheritdoc/>
-        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 3000, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (AxisStates == null)
             {
@@ -1396,6 +1397,43 @@ namespace MotionControl
                     CardLogEvent(DateTime.Now, $"{axis}轴原点回归超时停止！（{stopwatch.Elapsed}）");
                 throw new Exception($"{axis}轴原点回归超时停止！（{stopwatch.Elapsed}）");
             }
+        }
+
+        /// <inheritdoc/>
+        public override void SetbjectDictionary(ushort card, ushort etherCATLocation, ushort primeindex, ushort wordindexing, ushort bitlength, int value)
+        {
+            var a = LTDMC.nmc_set_node_od(Card_Number[card], 2, etherCATLocation, primeindex, wordindexing, bitlength, value);
+            if (a == 0)
+            {
+                if (CardLogEvent != null)
+                    CardLogEvent(DateTime.Now, $"卡号{card}，EtherCAT地址{etherCATLocation}，主索引{primeindex}，子索引{wordindexing}，长度{bitlength}bit，设置值{value}成功！");
+            }
+            else
+            {
+                CardErrorMessage(a);
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void AxisErrorReset(ushort axis)
+        {
+            if (CardErrorMessage(LTDMC.nmc_clear_axis_errcode(Card_Number[0], axis)))
+            {
+                if (CardLogEvent != null)
+                    CardLogEvent(DateTime.Now, $"轴{axis}错误复位完成！");
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void SetAxis_iniFile()
+        {
+
+        }
+
+        /// <inheritdoc/>
+        public override void SetEtherCAT_eniFiel()
+        {
+            CardErrorMessage(LTDMC.dmc_download_configfile(Card_Number[0], @"AXIS.ini"));
         }
     }
 }
