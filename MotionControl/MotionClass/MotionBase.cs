@@ -103,6 +103,14 @@ namespace MotionControl
             public double Position { get; set; }
             /// <summary>
             /// 轴定位指令
+            /// <para>1=单轴绝对定位</para>
+            /// <para>2=单轴相对定位</para>
+            /// <para>3=单轴阻塞绝对定位</para>
+            /// <para>4=单轴阻塞相对定位</para>
+            /// <para>5=单轴原点回归</para>
+            /// <para>6=单轴阻塞原点回归</para>
+            /// <para>7=多轴线性相对插补定位</para>
+            /// <para>8=多轴线性绝对插补定位</para>
             /// </summary>
             public ushort Movetype { get; set; }
             /// <summary>
@@ -133,6 +141,57 @@ namespace MotionControl
             /// 等待超时时间（ms）
             /// </summary>
             public int OutTime { get; set; }
+
+            /// <summary>
+            /// 插补使用轴总数
+            /// </summary>
+            public ushort UsingAxisNumber { get; set; }
+            private ushort[] _axises;
+            /// <summary>
+            /// 插补轴号
+            /// </summary>
+            public ushort[] Axises
+            {
+                get { return _axises; }
+                set
+                {
+                    if (value.Length > UsingAxisNumber)
+                    {
+                        _axises = null;
+                        throw new Exception("轴数量大于设置插补轴总数");
+                    }
+                    else
+                    {
+                        _axises = value;
+                    }
+                   
+                }
+            }
+            private double[] _positions;
+            /// <summary>
+            /// 插补定位目标位置
+            /// </summary>
+            public double[] Positions
+            {
+                get { return _positions; }
+                set
+                {
+                    if (value.Length > UsingAxisNumber)
+                    {
+                        _positions = null;
+                        throw new Exception("定位地址数量大于设置插补轴总数");
+                    }
+                    else
+                    {
+                        _positions = value;
+                    }
+                  
+                }
+            }
+            /// <summary>
+            /// 插补定位前位置
+            /// </summary>
+            public double[] CurrentPositions { get; set; }
             /// <summary>
             /// 状态句柄
             /// </summary>
@@ -180,13 +239,14 @@ namespace MotionControl
                 {
                     if (value.Length > UsingAxisNumber)
                     {
+                        _axis = null;
                         throw new Exception("轴数量大于设置插补轴总数");
                     }
                     else
                     {
                         _axis = value;
                     }
-                    _axis = null;
+                  
                 }
             }
 
@@ -201,13 +261,14 @@ namespace MotionControl
                 {
                     if (value.Length > UsingAxisNumber)
                     {
+                        _position = null;
                         throw new Exception("定位地址数量大于设置插补轴总数");
                     }
                     else
                     {
                         _position = value;
                     }
-                    _position = null;
+                   
                 }
             }
         }
@@ -233,9 +294,9 @@ namespace MotionControl
         public static string CardBrand { get; set; }
 
         /// <summary>
-        /// 轴定位状态队列
+        /// 轴定位状态集合
         /// </summary>
-        public virtual ConcurrentBag<MoveState> IMoveStateQueue { get; set; }
+        public virtual List<MoveState> IMoveStateQueue { get; set; }
 
         /// <summary>
         /// 到位误差
@@ -571,11 +632,11 @@ namespace MotionControl
         /// <summary>
         /// 多轴线性插补
         /// </summary>
-        /// <typeparam name="T">ControlState结构体</typeparam>
         /// <param name="card">板卡号</param>
-        /// <param name="t">ControlState 结构参数</param>
-        /// <param name="time">超时时间</param>
-        public abstract void MoveLines<T>(ushort card, ControlState t,int time=0) where T : struct;
+        /// <param name="t">插补结构体</param>
+        /// <param name="time">插补动作超时时间</param>
+        public abstract void MoveLines(ushort card, ControlState t,int time=0);
+
         
     }
 }
