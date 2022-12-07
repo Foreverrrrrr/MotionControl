@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace MotionControl
@@ -14,6 +15,13 @@ namespace MotionControl
     /// </summary>
     public abstract class MotionBase : IControlBaseInterface
     {
+        [DllImport("winmm")]
+        public static extern uint timeGetTime();
+        [DllImport("winmm")]
+        public static extern void timeBeginPeriod(int t);
+        [DllImport("winmm")]
+        public static extern void timeEndPeriod(int t);
+
         /// <summary>
         /// 运动控制类实例对象
         /// </summary>
@@ -637,6 +645,29 @@ namespace MotionControl
         /// <param name="time">插补动作超时时间</param>
         public abstract void MoveLines(ushort card, ControlState t,int time=0);
 
-        
+        /// <summary>
+        /// 两轴圆弧插补（圆心）
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="t">插补结构体</param>
+        /// <param name="time">插补动作超时时间</param>
+        public abstract void MoveCircle_Center(ushort card, ControlState t, int time = 0);
+
+        /// <summary>
+        /// 单轴下使能
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="axis">轴号</param>
+        public abstract void AxisOff(ushort card, ushort axis);
+
+        /// <summary>
+        /// 所有轴下使能
+        /// </summary>
+        public abstract void AxisOff();
+
+        /// <summary>
+        /// 释放控制卡
+        /// </summary>
+        public abstract void CloseCard();
     }
 }

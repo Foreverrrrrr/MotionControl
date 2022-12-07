@@ -114,6 +114,11 @@ namespace MotionControl
         bool OpenCard();
 
         /// <summary>
+        /// 释放控制卡
+        /// </summary>
+        void CloseCard();
+
+        /// <summary>
         /// 单个轴使能
         /// </summary>
         /// <param name="card">卡号</param>
@@ -126,6 +131,18 @@ namespace MotionControl
         /// </summary>
         /// <returns></returns>
         void AxisOn();
+
+        /// <summary>
+        /// 单轴下使能
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="axis">轴号</param>
+        void AxisOff(ushort card, ushort axis);
+
+        /// <summary>
+        /// 所有轴下使能
+        /// </summary>
+        void AxisOff();
 
         /// <summary>
         /// 轴基础参数设置

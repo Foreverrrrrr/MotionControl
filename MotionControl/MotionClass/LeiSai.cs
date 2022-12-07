@@ -223,6 +223,37 @@ namespace MotionControl
         }
 
         /// <summary>
+        /// 单轴下使能
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="axis">轴号</param>
+        public override void AxisOff(ushort card, ushort axis)
+        {
+            _ = Axis == null ? throw new Exception("请先初始化板卡再使能轴！") : true;
+            LTDMC.nmc_set_axis_disable(Card_Number[card], axis);
+            AxisStop(Axis[axis], 0, false);
+            if (CardLogEvent != null)
+                CardLogEvent(DateTime.Now, $"{axis}轴上使能");
+        }
+
+        /// <summary>
+        /// 所有轴下使能
+        /// </summary>
+        public override void AxisOff()
+        {
+            _ = Axis == null ? throw new Exception("请先初始化板卡再使能轴！") : true;
+            for (int i = 0; i < Card_Number.Length; i++)
+            {
+                LTDMC.nmc_set_axis_disable(Card_Number[i], 255);
+
+
+            }
+            AxisStop(Axis[0], 0, true);
+            if (CardLogEvent != null)
+                CardLogEvent(DateTime.Now, $"所有轴下使能");
+        }
+
+        /// <summary>
         /// 轴基础参数设置
         /// </summary>
         /// <param name="axis">轴号</param>
@@ -349,6 +380,14 @@ namespace MotionControl
                     throw new Exception("有 2 张或 2 张以上控制卡的硬件设置卡号相同!");
                 }
             }
+        }
+
+        /// <summary>
+        /// 释放雷赛控制卡
+        /// </summary>
+        public override void CloseCard()
+        {
+            CardErrorMessage(LTDMC.dmc_board_close());
         }
 
         /// <summary>
@@ -1972,6 +2011,17 @@ namespace MotionControl
                 throw new Exception($"{control.UsingAxisNumber}插补坐标系忙碌！");
             }
 
+        }
+
+        /// <summary>
+        /// 两轴圆弧插补（指定圆心）
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="t">插补结构体</param>
+        /// <param name="time">插补动作超时时间</param>
+        public override void MoveCircle_Center(ushort card, ControlState t, int time = 0)
+        {
+            
         }
     }
 }
