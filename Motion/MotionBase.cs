@@ -172,7 +172,7 @@ namespace MotionControl
                     {
                         _axises = value;
                     }
-                   
+
                 }
             }
             private double[] _positions;
@@ -193,7 +193,7 @@ namespace MotionControl
                     {
                         _positions = value;
                     }
-                  
+
                 }
             }
             /// <summary>
@@ -254,7 +254,7 @@ namespace MotionControl
                     {
                         _axis = value;
                     }
-                  
+
                 }
             }
 
@@ -276,7 +276,7 @@ namespace MotionControl
                     {
                         _position = value;
                     }
-                   
+
                 }
             }
         }
@@ -294,6 +294,10 @@ namespace MotionControl
             /// 高川板卡
             /// </summary>
             GaoChuān,
+            /// <summary>
+            /// 摩升泰板卡
+            /// </summary>
+            MoShengTai
         }
 
         /// <summary>
@@ -346,6 +350,15 @@ namespace MotionControl
         /// </summary>
         public abstract short[] CoordinateSystemStates { get; set; }
 
+        /// <summary>
+        /// 板卡是否打开
+        /// </summary>
+        public abstract bool IsOpenCard { get; set; }
+
+        /// <summary>
+        /// 总线轴总数
+        /// </summary>
+        public abstract int Axisquantity { get; set; }
 
         /// <summary>
         /// 获取板卡对象
@@ -362,7 +375,7 @@ namespace MotionControl
                 Type type = Type.GetType(Assemblyname + "." + modelname.ToString());
                 dynamic obj = type.Assembly.CreateInstance(type.ToString());
                 MotionBase classBase = obj as MotionBase;
-              
+
                 return classBase;
             }
             catch (Exception ex)
@@ -385,7 +398,7 @@ namespace MotionControl
                 string data = "";
                 if (returnPattern)
                 {
-                    data = SQLHelper.Readdata(CardBrand, Convert.ToUInt16(type));
+                    data = SQLHelper.Readdata(CardBrand, Convert.ToInt32(type));
                 }
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(type, data);
@@ -643,7 +656,7 @@ namespace MotionControl
         /// <param name="card">板卡号</param>
         /// <param name="t">插补结构体</param>
         /// <param name="time">插补动作超时时间</param>
-        public abstract void MoveLines(ushort card, ControlState t,int time=0);
+        public abstract void MoveLines(ushort card, ControlState t, int time = 0);
 
         /// <summary>
         /// 两轴圆弧插补（圆心）
