@@ -108,6 +108,8 @@
     <Compile Include="MotionClass\IControlBaseInterface.cs" />
     <Compile Include="MotionClass\LeiSai.cs" />
     <Compile Include="MotionClass\LTDMC.cs" />
+    <Compile Include="MotionClass\MCDLL_NET.cs" />
+    <Compile Include="MotionClass\MoShengTai.cs" />
     <Compile Include="MotionClass\MotionBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -13,6 +13,16 @@ namespace MotionControl
     internal interface IControlBaseInterface
     {
         /// <summary>
+        /// 总线轴总数
+        /// </summary>
+         int Axisquantity { get; set; }
+
+        /// <summary>
+        /// 板卡是否打开
+        /// </summary>
+        bool IsOpenCard { get; set; }
+
+        /// <summary>
         /// 总线状态数组
         /// <para>int[0]==总线扫描周期</para>
         /// <para>int[1]==总线状态，Value=0为总线正常</para>

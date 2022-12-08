@@ -14,12 +14,13 @@ namespace MotionControl
 {
     public partial class Form1 : Form
     {
-        MotionBase motion;
+        private MotionBase motion;
         public Form1()
         {
             InitializeComponent();
-
-            motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
+            motion = MotionBase.GetClassType(MotionBase.CardName.MoShengTai);
+            motion.Card_Number = new ushort[] { (ushort)MoShengTai.ModelType.NMC5800_5600_1800_1600R, (ushort)MoShengTai.ModelType.NIO4832_3232 };
+            var at = motion.OpenCard();
             motion.FactorValue = 20;
             motion.CardErrorMessageEvent += (i, message) =>
             {
@@ -88,18 +89,22 @@ namespace MotionControl
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            textBox1.Text = motion.AxisStates[0][4].ToString();
-            textBox2.Text = motion.AxisStates[0][6].ToString();
-            textBox3.Text = motion.AxisStates[0][1].ToString();
-            textBox4.Text = motion.AxisStates[0][0].ToString();
-            textBox5.Text = motion.AxisStates[0][2].ToString();
-            textBox6.Text = motion.AxisStates[0][3].ToString();
-            textBox7.Text = motion.AxisStates[0][7].ToString();
+            if (motion.AxisStates != null)
+            {
+                textBox1.Text = motion.AxisStates[0][4].ToString();
+                textBox2.Text = motion.AxisStates[0][6].ToString();
+                textBox3.Text = motion.AxisStates[0][1].ToString();
+                textBox4.Text = motion.AxisStates[0][0].ToString();
+                textBox5.Text = motion.AxisStates[0][2].ToString();
+                textBox6.Text = motion.AxisStates[0][3].ToString();
+                textBox7.Text = motion.AxisStates[0][7].ToString();
+            }
+
         }
 
         private void button3_MouseUp(object sender, MouseEventArgs e)
         {
-            motion.AxisStop(0, 0,false);
+            motion.AxisStop(0, 0, false);
         }
 
         private void button3_MouseDown(object sender, MouseEventArgs e)
@@ -115,14 +120,14 @@ namespace MotionControl
         private void button5_Click(object sender, EventArgs e)
         {
             //motion.MoveAbs(0, 1000, 10000);
-            
+
             motion.MoveAbs(0, 10000, 10000, 0);
 
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            motion.MoveRel(0, 100000, 10000,0);
+            motion.MoveRel(0, 100000, 10000, 0);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -132,14 +137,14 @@ namespace MotionControl
 
         private void button8_Click(object sender, EventArgs e)
         {
-           
-            motion.AwaitIOinput(0, 0, true,3000);
+
+            motion.AwaitIOinput(0, 0, true, 3000);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
             motion.ResetCard(0, 0);
-            
+
         }
 
         private void button10_Click(object sender, EventArgs e)
