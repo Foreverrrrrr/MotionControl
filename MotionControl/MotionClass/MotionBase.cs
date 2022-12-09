@@ -27,6 +27,9 @@ namespace MotionControl
         /// </summary>
         public static MotionBase Thismotion { get; set; }
 
+
+        public static object[] Motion_Lok;
+
         /// <summary>
         /// 数字io输入
         /// </summary>
@@ -119,6 +122,8 @@ namespace MotionControl
             /// <para>6=单轴阻塞原点回归</para>
             /// <para>7=多轴线性相对插补定位</para>
             /// <para>8=多轴线性绝对插补定位</para>
+            /// <para>9=阻塞多轴线性相对插补定位</para>
+            /// <para>10=阻塞多轴线性绝对插补定位</para>
             /// </summary>
             public ushort Movetype { get; set; }
             /// <summary>
@@ -567,6 +572,14 @@ namespace MotionControl
         public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
 
         /// <summary>
+        /// 设置紧急停止外部IO
+        /// </summary>
+        public virtual void Set_ExigencyIO(ushort card, ushort in_put, uint stop_model)
+        {
+            throw new NotImplementedException("该板卡无效设置紧急停止IO");
+        }
+
+        /// <summary>
         /// 等待输入信号
         /// </summary>
         /// <param name="card">板卡号</param>
@@ -643,7 +656,7 @@ namespace MotionControl
         /// <summary>
         /// 设置板卡轴配置文件
         /// </summary>
-        public abstract void SetAxis_iniFile();
+        public abstract void SetAxis_iniFile(string path = "AXIS.ini");
 
         /// <summary>
         /// 设置EtherCAT总线配置文件
@@ -657,6 +670,15 @@ namespace MotionControl
         /// <param name="t">插补结构体</param>
         /// <param name="time">插补动作超时时间</param>
         public abstract void MoveLines(ushort card, ControlState t, int time = 0);
+
+
+        /// <summary>
+        /// 阻塞多轴线性插补
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="t">插补结构体</param>
+        /// <param name="time">插补动作超时时间</param>
+        public abstract void AwaitMoveLines(ushort card, ControlState t, int time = 0);
 
         /// <summary>
         /// 两轴圆弧插补（圆心）
@@ -682,5 +704,11 @@ namespace MotionControl
         /// 释放控制卡
         /// </summary>
         public abstract void CloseCard();
+
+        /// <summary>
+        /// 轴状态复位
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        public abstract void AxisReset(ushort axis);
     }
 }

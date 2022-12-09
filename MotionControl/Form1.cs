@@ -1,12 +1,4 @@
-﻿using MotionControl;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,9 +10,7 @@ namespace MotionControl
         public Form1()
         {
             InitializeComponent();
-            motion = MotionBase.GetClassType(MotionBase.CardName.MoShengTai);
-            motion.Card_Number = new ushort[] { (ushort)MoShengTai.ModelType.NMC5800_5600_1800_1600R, (ushort)MoShengTai.ModelType.NIO4832_3232 };
-            var at = motion.OpenCard();
+            motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
             motion.FactorValue = 20;
             motion.CardErrorMessageEvent += (i, message) =>
             {
@@ -38,49 +28,9 @@ namespace MotionControl
                 {
                     listBox1.Items.Insert(0, message);
                 }));
-
             };
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -98,36 +48,38 @@ namespace MotionControl
                 textBox5.Text = motion.AxisStates[0][2].ToString();
                 textBox6.Text = motion.AxisStates[0][3].ToString();
                 textBox7.Text = motion.AxisStates[0][7].ToString();
+                textBox8.Text = motion.AxisStates[0][5].ToString();
             }
-
         }
 
         private void button3_MouseUp(object sender, MouseEventArgs e)
         {
             motion.AxisStop(0, 0, false);
+            motion.AxisStop(1, 0, false);
         }
 
         private void button3_MouseDown(object sender, MouseEventArgs e)
         {
-            motion.MoveJog(0, 100000, 0);
+            motion.MoveJog(0, 10000, 0);
+            motion.MoveJog(1, 10000, 0);
         }
 
         private void button4_MouseDown(object sender, MouseEventArgs e)
         {
-            motion.MoveJog(0, 100000, 1);
+            motion.MoveJog(0, 10000, 1);
+            motion.MoveJog(1, 10000, 1);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            //motion.MoveAbs(0, 1000, 10000);
-
-            motion.MoveAbs(0, 10000, 10000, 0);
-
+            motion.MoveAbs(0, 10000, 2000000, 0);
+            motion.MoveAbs(1, 10000, 1000000, 0);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            motion.MoveRel(0, 100000, 10000, 0);
+            motion.MoveRel(0, 500000, 2000000, 0);
+            motion.MoveRel(1, 500000, 1000000, 0);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -137,14 +89,12 @@ namespace MotionControl
 
         private void button8_Click(object sender, EventArgs e)
         {
-
             motion.AwaitIOinput(0, 0, true, 3000);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
             motion.ResetCard(0, 0);
-
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -154,7 +104,42 @@ namespace MotionControl
 
         private void button11_Click(object sender, EventArgs e)
         {
-            motion.AwaitMoveAbs(0, 10000, 10000, 0);
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        motion.AwaitMoveAbs(0, 5000000, 2000000, 0);
+                        motion.AwaitMoveAbs(0, 0, 2000000, 0);
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                        throw;
+                    }
+
+                }
+            });
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    try
+                    {
+                        motion.AwaitMoveAbs(1, 500000, 800000, 0);
+                        motion.AwaitMoveAbs(1, 0, 800000, 0);
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                        throw;
+                    }
+
+                }
+
+            });
+
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -165,6 +150,20 @@ namespace MotionControl
         private void button13_Click(object sender, EventArgs e)
         {
             motion.MoveHome(0, 27, 10000);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            motion.AxisStop(0, 1, true);
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            for (ushort i = 0; i < motion.Axis.Length; i++)
+            {
+                motion.AxisReset(i);
+            }
+
         }
     }
 }

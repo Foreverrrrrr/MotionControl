@@ -188,6 +188,12 @@ namespace MotionControl
         void AxisStop(ushort axis, int stop_mode, bool all);
 
         /// <summary>
+        /// 轴状态复位
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        void AxisReset(ushort axis);
+
+        /// <summary>
         /// 复位轴停止前定位动作
         /// </summary>
         /// <param name="axis">轴号</param>
@@ -360,7 +366,7 @@ namespace MotionControl
         /// <summary>
         /// 设置板卡轴配置文件
         /// </summary>
-        void SetAxis_iniFile();
+        void SetAxis_iniFile(string path="AXIS.ini");
 
         void SetEtherCAT_eniFiel();
     }

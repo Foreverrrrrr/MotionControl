@@ -59,6 +59,10 @@ namespace MotionControl
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
+            this.button14 = new System.Windows.Forms.Button();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.button15 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -110,7 +114,6 @@ namespace MotionControl
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 4;
             this.label1.Text = "运动到位";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // textBox1
             // 
@@ -118,15 +121,13 @@ namespace MotionControl
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 5;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(287, 48);
+            this.textBox2.Location = new System.Drawing.Point(287, 50);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 21);
             this.textBox2.TabIndex = 7;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label2
             // 
@@ -136,7 +137,6 @@ namespace MotionControl
             this.label2.Size = new System.Drawing.Size(65, 12);
             this.label2.TabIndex = 6;
             this.label2.Text = "轴运动模式";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // textBox3
             // 
@@ -176,7 +176,6 @@ namespace MotionControl
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 21);
             this.textBox5.TabIndex = 15;
-            this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
             // 
             // label5
             // 
@@ -186,7 +185,6 @@ namespace MotionControl
             this.label5.Size = new System.Drawing.Size(65, 12);
             this.label5.TabIndex = 14;
             this.label5.Text = "轴目标位置";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // textBox6
             // 
@@ -194,7 +192,6 @@ namespace MotionControl
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(100, 21);
             this.textBox6.TabIndex = 13;
-            this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
             // label6
             // 
@@ -204,7 +201,6 @@ namespace MotionControl
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 12;
             this.label6.Text = "轴速度";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // timer1
             // 
@@ -257,7 +253,7 @@ namespace MotionControl
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(75, 23);
             this.button9.TabIndex = 20;
-            this.button9.Text = "复位";
+            this.button9.Text = "板卡复位";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
@@ -326,11 +322,51 @@ namespace MotionControl
             this.label7.TabIndex = 27;
             this.label7.Text = "轴停止原因";
             // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(730, 242);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(75, 23);
+            this.button14.TabIndex = 28;
+            this.button14.Text = "停止";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(676, 48);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(100, 21);
+            this.textBox8.TabIndex = 30;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(629, 53);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(41, 12);
+            this.label8.TabIndex = 29;
+            this.label8.Text = "轴状态";
+            // 
+            // button15
+            // 
+            this.button15.Location = new System.Drawing.Point(474, 284);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(75, 23);
+            this.button15.TabIndex = 31;
+            this.button15.Text = "轴复位";
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(856, 450);
+            this.Controls.Add(this.button15);
+            this.Controls.Add(this.textBox8);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.button14);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.button12);
@@ -398,6 +434,10 @@ namespace MotionControl
         private System.Windows.Forms.Button button12;
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button button15;
     }
 }
 
