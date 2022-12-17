@@ -605,7 +605,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], state.Axis, 0, state.Speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], state.Axis, state.Position, 1));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
@@ -696,11 +696,10 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], state.Axis, 0, state.Speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], state.Axis, t, 0));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
-
                         do
                         {
                             if (state.OutTime != 0 && stopwatch.Elapsed.TotalMilliseconds > state.OutTime)
@@ -788,7 +787,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], state.Axis, 0, state.Speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], state.Axis, state.Position, 1));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     do
                     {
@@ -827,7 +826,6 @@ namespace MotionControl
                     if (CardLogEvent != null)
                         CardLogEvent(DateTime.Now, $"{state.Axis}轴定位地址{state.Position}，单轴绝对定位等待到位超时（{stopwatch.Elapsed}）");
                     throw new Exception($"{state.Axis}轴定位地址{state.Position}，单轴绝对定位等待到位超时（{stopwatch.Elapsed}）");
-
                 }
             }
             else
@@ -878,7 +876,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], state.Axis, 0, state.Speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], state.Axis, t, 0));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     do
                     {
@@ -964,7 +962,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
                         CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], state.Axis));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
@@ -1055,7 +1053,7 @@ namespace MotionControl
                         CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
 
                         CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], state.Axis));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     do
                     {
@@ -1113,7 +1111,7 @@ namespace MotionControl
             {
                 foreach (var item in state.Axises)
                 {
-                    CardErrorMessage(LTDMC.dmc_clear_stop_reason(0, item));
+
                     if (AxisStates[item][4] != 1)
                     {
                         if (CardLogEvent != null)
@@ -1128,13 +1126,14 @@ namespace MotionControl
                         throw new Exception($"{state.UsingAxisNumber}轴直线插补启动错误！ {item}轴未上使能！");
                         return;
                     }
-                    if (AxisStates[item][7] != 13)
+                    if (AxisStates[item][7] == 13)
                     {
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, $"{state.UsingAxisNumber}轴直线插补启动错误！ {item}轴在停止中！");
                         throw new Exception($"{state.UsingAxisNumber}轴直线插补启动错误！ {item}轴在停止中！");
                         return;
                     }
+                    CardErrorMessage(LTDMC.dmc_clear_stop_reason(0, item));
                 }
                 var coordinate = Array.IndexOf(CoordinateSystemStates, (short)4);
                 if (coordinate != -1)
@@ -1144,6 +1143,8 @@ namespace MotionControl
                         Stopwatch stopwatch = new Stopwatch();
                         lock (Motion_Lok[state.Axis])
                         {
+                            if (CardLogEvent != null)
+                                CardLogEvent(DateTime.Now, $"{state.UsingAxisNumber}轴直线插补启动！");
                             ushort[] axis = new ushort[state.UsingAxisNumber];
                             double[] pos = new double[state.UsingAxisNumber];
                             axis = state.Axises;
@@ -1167,7 +1168,7 @@ namespace MotionControl
                             stopwatch.Restart();
                             CardErrorMessage(LTDMC.dmc_set_vector_profile_unit(Card_Number[state.CardID], Convert.ToUInt16(coordinate), 0, state.Speed, state.ACC, state.Dcc, 0));
                             CardErrorMessage(LTDMC.dmc_line_unit(Card_Number[state.CardID], Convert.ToUInt16(coordinate), state.UsingAxisNumber, axis, pos, movtype));
-                            Thread.Sleep(100);
+                            Thread.Sleep(50);
                         }
                         Task.Factory.StartNew(() =>
                         {
@@ -1181,9 +1182,9 @@ namespace MotionControl
                             {
                                 if (state.OutTime != 0 && stopwatch.Elapsed.TotalMilliseconds > state.OutTime)
                                     goto Timeout;
-                            } while (LTDMC.dmc_check_done_multicoor(Card_Number[state.CardID], Convert.ToUInt16(coordinate)) == 1);
+                            } while (LTDMC.dmc_check_done_multicoor(Card_Number[state.CardID], Convert.ToUInt16(coordinate)) == 0);
                             stopwatch.Stop();
-                            if (CoordinateSystemStates[coordinate] == 4 && LTDMC.dmc_check_done_multicoor(Card_Number[state.CardID], Convert.ToUInt16(coordinate)) == 1)
+                            if (CoordinateSystemStates[coordinate] == 4)
                             {
                                 foreach (var item in state.Axises)
                                 {
@@ -1289,7 +1290,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], axis, 0, speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], axis, position, 1));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
@@ -1402,7 +1403,7 @@ namespace MotionControl
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], axis, 0, speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], axis, position, 0));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
@@ -1550,18 +1551,21 @@ namespace MotionControl
                 var list = IMoveStateQueue.ToArray();
                 foreach (var item in list)
                 {
-                    switch (item.Movetype)
+                    if (item.Axis == axis)
                     {
-                        case 1: MoveAbs(item); break;
-                        case 2: MoveRel(item); break;
-                        case 3: AwaitMoveAbs(item); break;
-                        case 4: AwaitMoveRel(item); break;
-                        case 5: MoveHome(item); break;
-                        case 6: AwaitMoveHome(item); break;
-                        case 7: MoveLines(item); break;
-                        case 8: MoveLines(item); break;
-                        default:
-                            break;
+                        switch (item.Movetype)
+                        {
+                            case 1: MoveAbs(item); break;
+                            case 2: MoveRel(item); break;
+                            case 3: AwaitMoveAbs(item); break;
+                            case 4: AwaitMoveRel(item); break;
+                            case 5: MoveHome(item); break;
+                            case 6: AwaitMoveHome(item); break;
+                            case 7: MoveLines(item); break;
+                            case 8: MoveLines(item); break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -1617,32 +1621,28 @@ namespace MotionControl
         {
             if (IsOpenCard)
             {
-                lock (Motion_Lok[axis])
+
+                if (AxisStates[axis][4] != 1)
                 {
-                    if (AxisStates[axis][4] != 1)
-                    {
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴在运动中！");
-                        throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴在运动中！");
-                        return;
-                    }
-                    if (AxisStates[axis][5] != 4)
-                    {
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴未上使能！");
-                        throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴未上使能！");
-                        return;
-                    }
-                    if (AxisStates[axis][7] == 13)
-                    {
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴处于停止中！");
-                        throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴处于停止中！");
-                        return;
-                    }
+                    if (CardLogEvent != null)
+                        CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴在运动中！");
+                    throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴在运动中！");
+                    return;
                 }
-
-
+                if (AxisStates[axis][5] != 4)
+                {
+                    if (CardLogEvent != null)
+                        CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴未上使能！");
+                    throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴未上使能！");
+                    return;
+                }
+                if (AxisStates[axis][7] == 13)
+                {
+                    if (CardLogEvent != null)
+                        CardLogEvent(DateTime.Now, $"{axis}单轴阻塞绝对定位启动错误！ {axis}轴处于停止中！");
+                    throw new Exception($"{axis}单轴阻塞绝对定位启动错误！ {axis}轴处于停止中！");
+                    return;
+                }
                 if (axis < Axis.Length && AxisStates[axis][4] == 1 && AxisStates[axis][5] == 4 && AxisStates[axis][7] != 13)
                 {
                     Stopwatch stopwatch = new Stopwatch();
@@ -1777,11 +1777,10 @@ namespace MotionControl
                             IMoveStateQueue.Remove(colose);
                         }
                         IMoveStateQueue.Add(state);
-
                         stopwatch.Restart();
                         CardErrorMessage(LTDMC.dmc_set_profile_unit(Card_Number[0], axis, 0, speed, Acc, Dec, 0));//设置速度参数
                         CardErrorMessage(LTDMC.dmc_pmove_unit(Card_Number[0], axis, position, 0));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     do
                     {
@@ -1798,6 +1797,7 @@ namespace MotionControl
                     {
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, $"{axis}轴定位地址{position}，单轴相对定位到位完成：（{stopwatch.Elapsed}）");
+                        IMoveStateQueue.Remove(state);
                     }
                     else
                     {
@@ -1809,7 +1809,6 @@ namespace MotionControl
                         }
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, $"{axis}轴定位地址{position}，到位编码器误差过大! （{stopwatch.Elapsed}）");
-
                     }
                     return;
                 Timeout:
@@ -1819,7 +1818,6 @@ namespace MotionControl
                     if (CardLogEvent != null)
                         CardLogEvent(DateTime.Now, $"{axis}轴定位地址{position}，单轴相对定位等待到位超时（{stopwatch.Elapsed}）");
                     throw new Exception($"{axis}轴定位地址{position}，单轴相对定位等待到位超时（{stopwatch.Elapsed}）");
-
                 }
             }
             else
@@ -2140,7 +2138,7 @@ namespace MotionControl
                         }
                         IMoveStateQueue.Add(state);
                         CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], axis));
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     Task.Factory.StartNew(() =>
                     {
@@ -2257,8 +2255,8 @@ namespace MotionControl
                         }
                         IMoveStateQueue.Add(state);
                         CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], axis));
+                        Thread.Sleep(50);
                     }
-                    Thread.Sleep(100);
                     do
                     {
                         if (timeout != 0 && stopwatch.Elapsed.TotalMilliseconds > timeout)
@@ -2400,11 +2398,10 @@ namespace MotionControl
                         throw new Exception($"{control.UsingAxisNumber}轴直线插补启动错误！ {control.Axis[item]}轴未上使能！");
                         return;
                     }
-                    if (AxisStates[item][7] != 13)
+                    if (AxisStates[item][7] == 13)
                     {
-                        if (AxisStates[item][7] == 13)
-                            if (CardLogEvent != null)
-                                CardLogEvent(DateTime.Now, $"{control.UsingAxisNumber}轴直线插补启动错误！ {control.Axis[item]}轴处于停止中！");
+                        if (CardLogEvent != null)
+                            CardLogEvent(DateTime.Now, $"{control.UsingAxisNumber}轴直线插补启动错误！ {control.Axis[item]}轴处于停止中！");
                         throw new Exception($"{control.UsingAxisNumber}轴直线插补启动错误！ {control.Axis[item]}轴处于停止中！");
                         return;
                     }
@@ -2415,6 +2412,7 @@ namespace MotionControl
                         IMoveStateQueue.Remove(colose);
                     }
                 }
+               
                 MoveState state = new MoveState()
                 {
                     CardID = card,
@@ -2423,7 +2421,8 @@ namespace MotionControl
                     Speed = control.Speed,
                     UsingAxisNumber = control.UsingAxisNumber,
                     Axises = control.Axis,
-                    OutTime = time
+                    OutTime = time,
+                    Positions = control.Position
                 };
                 state.CurrentPositions = new double[state.UsingAxisNumber];
                 if (control.locationModel == 0)
@@ -2453,6 +2452,8 @@ namespace MotionControl
                         Stopwatch stopwatch = new Stopwatch();
                         lock (Motion_Lok[control.Axis[0]])
                         {
+                            if (CardLogEvent != null)
+                                CardLogEvent(DateTime.Now, $"{control.UsingAxisNumber}轴直线插补启动！");
                             ushort[] axis = new ushort[control.UsingAxisNumber];
                             double[] pos = new double[control.UsingAxisNumber];
                             axis = control.Axis;
@@ -2474,9 +2475,9 @@ namespace MotionControl
                             {
                                 if (time != 0 && stopwatch.Elapsed.TotalMilliseconds > time)
                                     goto Timeout;
-                            } while (LTDMC.dmc_check_done_multicoor(Card_Number[card], Convert.ToUInt16(coordinate)) == 1);
+                            } while (LTDMC.dmc_check_done_multicoor(Card_Number[card], Convert.ToUInt16(coordinate)) == 0);
                             stopwatch.Stop();
-                            if (CoordinateSystemStates[coordinate] == 4 && LTDMC.dmc_check_done_multicoor(Card_Number[card], Convert.ToUInt16(coordinate)) == 1)
+                            if (CoordinateSystemStates[coordinate] == 4)
                             {
                                 foreach (var item in control.Axis)
                                 {
