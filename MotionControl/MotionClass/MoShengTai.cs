@@ -78,7 +78,7 @@ namespace MotionControl
         /// </summary>
         public override bool IsOpenCard { get; set; }
 
-        public override event Action<DateTime, string> CardLogEvent;
+        public override event Action<DateTime,bool, string> CardLogEvent;
 
 
         public MoShengTai()
@@ -126,7 +126,7 @@ namespace MotionControl
                 if (CardErrorMessage(CMCDLL_NET.MCF_Set_Servo_Enable_Net(axis, 0, card)))
                 {
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, $"{axis}轴上使能！");
+                        CardLogEvent(DateTime.Now,false, $"{axis}轴上使能！");
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace MotionControl
                     if (CardErrorMessage(CMCDLL_NET.MCF_Set_Servo_Enable_Net((ushort)i, 0, 0)))
                     {
                         if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, $"{i}轴下使能！");
+                            CardLogEvent(DateTime.Now, false, $"{i}轴下使能！");
                     }
                 }
             }
@@ -153,7 +153,7 @@ namespace MotionControl
                 if (CardErrorMessage(CMCDLL_NET.MCF_Set_Servo_Enable_Net(axis, 1, card)))
                 {
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, $"{axis}轴上使能！");
+                        CardLogEvent(DateTime.Now, false, $"{axis}轴上使能！");
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace MotionControl
                     if (CardErrorMessage(CMCDLL_NET.MCF_Set_Servo_Enable_Net((ushort)i, 1, 0)))
                     {
                         if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, $"{i}轴上使能！");
+                            CardLogEvent(DateTime.Now, false, $"{i}轴上使能！");
                     }
                 }
             }
@@ -375,7 +375,7 @@ namespace MotionControl
                 {
                     IsOpenCard = true;
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, "打开板卡成功!");
+                        CardLogEvent(DateTime.Now,false, "打开板卡成功!");
                     isopen = true;
                     if (Read_t1.ThreadState == System.Threading.ThreadState.Unstarted)
                     {
@@ -389,13 +389,13 @@ namespace MotionControl
                 if (Card_Number == null)
                 {
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, "未设置板卡型号！在OpenCard前请先在Card_Number数组中设置板卡型号");
+                        CardLogEvent(DateTime.Now,true, "未设置板卡型号！在OpenCard前请先在Card_Number数组中设置板卡型号");
                     throw new Exception("未设置板卡型号！在OpenCard前请先在Card_Number数组中设置板卡型号");
                 }
                 else if (Axis == null)
                 {
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, "未设置轴数量！在OpenCard前请先在Axis数组中设置轴数量");
+                        CardLogEvent(DateTime.Now, true, "未设置轴数量！在OpenCard前请先在Axis数组中设置轴数量");
                     throw new Exception("未设置轴数量！在OpenCard前请先在Axis数组中设置轴数量");
                 }
             }

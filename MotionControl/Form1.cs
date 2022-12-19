@@ -21,7 +21,7 @@ namespace MotionControl
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            motion.CardLogEvent += (i, message) =>
+            motion.CardLogEvent += (i,error, message) =>
             {
                 Console.WriteLine(i.ToString(), message);
                 this.Invoke(new Action(() =>

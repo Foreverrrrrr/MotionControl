@@ -27,7 +27,14 @@ namespace MotionControl
         /// </summary>
         public static MotionBase Thismotion { get; set; }
 
+        /// <summary>
+        /// 停止标志
+        /// </summary>
+        public static bool[] Stop_sign { get; set; }
 
+        /// <summary>
+        /// 线程锁
+        /// </summary>
         public static object[] Motion_Lok;
 
         /// <summary>
@@ -88,7 +95,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡运行日志事件
         /// </summary>
-        public abstract event Action<DateTime, string> CardLogEvent;
+        public abstract event Action<DateTime,bool, string> CardLogEvent;
 
         /// <summary>
         /// 运动控制板卡方法异常事件
@@ -176,6 +183,7 @@ namespace MotionControl
                     else
                     {
                         _axises = value;
+                        Axis = value[0];
                     }
 
                 }
@@ -258,6 +266,7 @@ namespace MotionControl
                     else
                     {
                         _axis = value;
+
                     }
 
                 }

@@ -108,7 +108,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡运行日志事件
         /// </summary>
-        event Action<DateTime, string> CardLogEvent;
+        event Action<DateTime,bool, string> CardLogEvent;
 
         /// <summary>
         /// 打开指定板卡
