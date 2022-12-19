@@ -21,7 +21,7 @@ namespace MotionControl
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            motion.CardLogEvent += (i,error, message) =>
+            motion.CardLogEvent += (i, ereeor, message) =>
             {
                 Console.WriteLine(i.ToString(), message);
                 this.Invoke(new Action(() =>
@@ -49,12 +49,13 @@ namespace MotionControl
                 textBox6.Text = motion.AxisStates[0][3].ToString();
                 textBox7.Text = motion.AxisStates[0][7].ToString();
                 textBox8.Text = motion.AxisStates[0][5].ToString();
+                textBox9.Text = motion.CoordinateSystemStates[0].ToString();
             }
         }
 
         private void button3_MouseUp(object sender, MouseEventArgs e)
         {
-            motion.AxisStop(0, 0, false);
+            motion.AxisStop(0, 0,false);
             motion.AxisStop(1, 0, false);
         }
 
@@ -100,6 +101,7 @@ namespace MotionControl
         private void button10_Click(object sender, EventArgs e)
         {
             motion.MoveReset(0);
+            motion.MoveReset(1);
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -110,15 +112,14 @@ namespace MotionControl
                 {
                     try
                     {
-                        motion.AwaitMoveAbs(0, 5000000, 2000000, 0);
-                        motion.AwaitMoveAbs(0, 0, 2000000, 0);
+                        motion.AwaitMoveAbs(0, 7000000, 4000000, 0);
+                        motion.AwaitMoveAbs(0, 0, 4000000, 0);
                     }
                     catch (Exception)
                     {
                         return;
                         throw;
                     }
-
                 }
             });
             Task.Run(() =>
@@ -127,24 +128,30 @@ namespace MotionControl
                 {
                     try
                     {
-                        motion.AwaitMoveAbs(1, 500000, 800000, 0);
-                        motion.AwaitMoveAbs(1, 0, 800000, 0);
+                        motion.AwaitMoveAbs(1, 1000000, 1000000, 0);
+                        motion.AwaitMoveAbs(1, 0, 1000000, 0);
                     }
                     catch (Exception)
                     {
                         return;
                         throw;
                     }
-
                 }
-
             });
-
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            motion.AwaitMoveRel(0, 10000, 10000, 0);
+            Task.Run(() =>
+            {
+                motion.AwaitMoveRel(0, 10000, 50000, 0);
+                motion.AwaitMoveRel(0, 20000, 10000, 0);
+            });
+            Task.Run(() =>
+            {
+                motion.AwaitMoveRel(1, 20000, 60000, 0);
+                motion.AwaitMoveRel(1, 10000, 10000, 0);
+            });
         }
 
         private void button13_Click(object sender, EventArgs e)
@@ -163,7 +170,20 @@ namespace MotionControl
             {
                 motion.AxisReset(i);
             }
+        }
 
+        private void button16_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { -1000000, 0 }, Speed = 10000000, locationModel = 1 });
+                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { 0, -1000000 }, Speed = 10000000, locationModel = 1});
+
+                }
+
+            });
         }
     }
 }

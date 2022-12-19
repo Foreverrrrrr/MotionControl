@@ -268,7 +268,6 @@ namespace MotionControl
                         _axis = value;
 
                     }
-
                 }
             }
 
@@ -290,7 +289,6 @@ namespace MotionControl
                     {
                         _position = value;
                     }
-
                 }
             }
         }
@@ -389,7 +387,6 @@ namespace MotionControl
                 Type type = Type.GetType(Assemblyname + "." + modelname.ToString());
                 dynamic obj = type.Assembly.CreateInstance(type.ToString());
                 MotionBase classBase = obj as MotionBase;
-
                 return classBase;
             }
             catch (Exception ex)
