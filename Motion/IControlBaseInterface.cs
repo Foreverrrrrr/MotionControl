@@ -108,7 +108,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡运行日志事件
         /// </summary>
-        event Action<DateTime, string> CardLogEvent;
+        event Action<DateTime,bool, string> CardLogEvent;
 
         /// <summary>
         /// 打开指定板卡
@@ -186,6 +186,12 @@ namespace MotionControl
         /// <param name="stop_mode">停止方式 0=减速停止 1=紧急停止</param>
         /// <param name="all">是否全部轴停止</param>
         void AxisStop(ushort axis, int stop_mode, bool all);
+
+        /// <summary>
+        /// 轴状态复位
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        void AxisReset(ushort axis);
 
         /// <summary>
         /// 复位轴停止前定位动作
@@ -360,7 +366,7 @@ namespace MotionControl
         /// <summary>
         /// 设置板卡轴配置文件
         /// </summary>
-        void SetAxis_iniFile();
+        void SetAxis_iniFile(string path="AXIS.ini");
 
         void SetEtherCAT_eniFiel();
     }
