@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("MotionControl")]
+[assembly: AssemblyTitle("Motion")]
 [assembly: AssemblyDescription("运动控制集成框架")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MotionControl")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyProduct("Motion")]
+[assembly: AssemblyCopyright("Copyright ©  2022  Forever")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

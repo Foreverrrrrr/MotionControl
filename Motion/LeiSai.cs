@@ -15,42 +15,42 @@ namespace MotionControl
         /// <summary>
         /// 启动按钮上升沿触发事件
         /// </summary>
-        private event Action<DateTime> StartPEvent;
+        public override event Action<DateTime> StartPEvent;
 
         /// <summary>
         /// 启动按钮下降沿触发事件
         /// </summary>
-        private event Action<DateTime> StartNEvent;
+        public override event Action<DateTime> StartNEvent;
 
         /// <summary>
         /// 复位按钮上升沿触发事件
         /// </summary>
-        private event Action<DateTime> ResetPEvent;
+        public override event Action<DateTime> ResetPEvent;
 
         /// <summary>
         /// 复位按钮下降沿触发事件
         /// </summary>
-        private event Action<DateTime> ResetNEvent;
+        public override event Action<DateTime> ResetNEvent;
 
         /// <summary>
         /// 停止按钮上升沿触发事件
         /// </summary>
-        private event Action<DateTime> StopPEvent;
+        public override event Action<DateTime> StopPEvent;
 
         /// <summary>
         /// 停止按钮下降沿触发事件
         /// </summary>
-        private event Action<DateTime> StopNEvent;
+        public override event Action<DateTime> StopNEvent;
 
         /// <summary>
         /// 紧急停止按钮上升沿触发事件
         /// </summary>
-        private event Action<DateTime> EStopPEvent;
+        public override event Action<DateTime> EStopPEvent;
 
         /// <summary>
         /// 紧急停止按钮下降沿触发事件
         /// </summary>
-        private event Action<DateTime> EStopNEvent;
+        public override event Action<DateTime> EStopNEvent;
 
         /// <summary>
         /// 数字io输入
@@ -1748,6 +1748,7 @@ namespace MotionControl
                 }
                 //SetExternalTrigger(0, 1, 2, 3, 4);
                 stopwatch.Stop();
+                Thread.Sleep(20);
                 Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
                 AutoReadEvent.WaitOne();
             }
@@ -2139,28 +2140,28 @@ namespace MotionControl
                         do
                         {
                             Thread.Sleep(20);
-                            if (stopwatch.Elapsed.TotalMilliseconds > timeout)
+                            if (timeout != 0 && stopwatch.Elapsed.TotalMilliseconds > timeout)
                                 goto Timeout;
 
                         } while (IO_Input[indexes] != waitvalue);
                         stopwatch.Stop();
                         if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, false, $"等待输入口{indexes}，状态{!waitvalue}完成（{stopwatch.Elapsed}）");
+                            CardLogEvent(DateTime.Now, false, $"等待输入口{indexes}，状态{waitvalue}完成（{stopwatch.Elapsed}）");
                         return;
                     Timeout:
                         stopwatch.Stop();
                         Console.WriteLine(stopwatch.Elapsed);
                         if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{!waitvalue}超时（{stopwatch.Elapsed}）");
-                        throw new Exception($"等待输入口{indexes}，等待状态{!waitvalue}超时（{stopwatch.Elapsed}）");
+                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{waitvalue}超时（{stopwatch.Elapsed}）");
+                        throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}超时（{stopwatch.Elapsed}）");
                     }
                     catch (ThreadAbortException ex)
                     {
                         stopwatch.Stop();
                         Console.WriteLine(stopwatch.Elapsed);
                         if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{!waitvalue}线程异常中断（{stopwatch.Elapsed}）");
-                        throw new Exception($"等待输入口{indexes}，等待状态{!waitvalue}线程异常中断（{stopwatch.Elapsed}）");
+                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
+                        throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
                     }
                 }
             }
@@ -2236,26 +2237,88 @@ namespace MotionControl
         /// <param name="reset">复位按钮输入点</param>
         /// <param name="stop">停止按钮输入点</param>
         /// <param name="estop">紧急停止按钮输入点</param>
-        public override void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop)
+        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop)
         {
-            if (Special_io != null)
+            Special_io = new bool[32];
+            Task.Run(() =>
             {
-                if (!Special_io[0])
+                while (true)
                 {
-                    if (IO_Input[start])
+                    lock (this)
                     {
-                        StartPEvent?.Invoke(new DateTime());
+                        Thread.Sleep(30);
+                        if (IO_Input != null)
+                        {
+                            if (!Special_io[estop])//紧急停止
+                            {
+                                if (IO_Input[estop])
+                                {
+                                    StopPEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            if (Special_io[estop])
+                            {
+                                if (!IO_Input[estop])
+                                {
+                                    StopNEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            Special_io[estop] = IO_Input[estop];
+                            AutoReadEvent.WaitOne();
+                            if (!Special_io[stop])//停止
+                            {
+                                if (IO_Input[stop])
+                                {
+                                    StopPEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            if (Special_io[stop])
+                            {
+                                if (!IO_Input[stop])
+                                {
+                                    StopNEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            Special_io[stop] = IO_Input[stop];
+                            AutoReadEvent.WaitOne();
+
+                            if (!Special_io[reset])//复位
+                            {
+                                if (IO_Input[reset])
+                                {
+                                    ResetPEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            if (Special_io[reset])
+                            {
+                                if (!IO_Input[reset])
+                                {
+                                    ResetNEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            Special_io[reset] = IO_Input[reset];
+                            AutoReadEvent.WaitOne();
+
+                            if (!Special_io[start])//启动
+                            {
+                                if (IO_Input[start])
+                                {
+                                    StartPEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            if (Special_io[start])
+                            {
+                                if (!IO_Input[start])
+                                {
+                                    StartNEvent?.Invoke(new DateTime());
+                                }
+                            }
+                            Special_io[start] = IO_Input[start];
+                            AutoReadEvent.WaitOne();
+                        }
                     }
                 }
-                else if (Special_io[0])
-                {
-                    if (!IO_Input[start])
-                    {
-                        StartNEvent?.Invoke(new DateTime());
-                    }
-                }
-                Special_io[0] = IO_Input[start];
-            }
+            });
         }
 
         /// <summary>

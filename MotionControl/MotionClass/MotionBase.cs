@@ -99,6 +99,46 @@ namespace MotionControl
         public virtual event Action<object, string> CardErrorMessageEvent;
 
         /// <summary>
+        /// 启动按钮上升沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> StartPEvent;
+
+        /// <summary>
+        /// 启动按钮下降沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> StartNEvent;
+
+        /// <summary>
+        /// 复位按钮上升沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> ResetPEvent;
+
+        /// <summary>
+        /// 复位按钮下降沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> ResetNEvent;
+
+        /// <summary>
+        /// 停止按钮上升沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> StopPEvent;
+
+        /// <summary>
+        /// 停止按钮下降沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> StopNEvent;
+
+        /// <summary>
+        /// 紧急停止按钮上升沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> EStopPEvent;
+
+        /// <summary>
+        /// 紧急停止按钮下降沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> EStopNEvent;
+
+        /// <summary>
         /// 轴定位状态结构
         /// </summary>
         public struct MoveState
@@ -598,7 +638,7 @@ namespace MotionControl
         /// <param name="reset">复位按钮输入点</param>
         /// <param name="stop">停止按钮输入点</param>
         /// <param name="estop">紧急停止按钮输入点</param>
-        public abstract void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
+        public abstract void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop);
 
         /// <summary>
         /// 读取总线状态

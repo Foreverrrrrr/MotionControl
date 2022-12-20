@@ -489,7 +489,7 @@ namespace MotionControl
             throw new NotImplementedException();
         }
 
-        public override void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop)
+        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop)
         {
             throw new NotImplementedException();
         }

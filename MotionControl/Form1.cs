@@ -17,6 +17,7 @@ namespace MotionControl
                 Console.WriteLine(i.ToString(), message);
             };
             motion.OpenCard();
+            motion.SetExternalTrigger(8, 9, 0, 0);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -28,6 +29,51 @@ namespace MotionControl
                 {
                     listBox1.Items.Insert(0, message);
                 }));
+            };
+
+            motion.StartPEvent += (t) =>
+            {
+
+                Task.Run(() =>
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        listBox1.Items.Insert(0, "启动按钮上升沿");
+                    }));
+                });
+            };
+
+            motion.StartNEvent += (t) =>
+            {
+                Task.Run(() =>
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        listBox1.Items.Insert(0, "启动按钮下降沿");
+                    }));
+                });
+            };
+
+            motion.ResetPEvent += (t) =>
+            {
+                Task.Run(() =>
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        listBox1.Items.Insert(0, "复位按钮上升沿");
+                    }));
+                });
+            };
+
+            motion.ResetNEvent += (t) =>
+            {
+                Task.Run(() =>
+                {
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        listBox1.Items.Insert(0, "复位按钮下降沿");
+                    }));
+                });
             };
         }
 

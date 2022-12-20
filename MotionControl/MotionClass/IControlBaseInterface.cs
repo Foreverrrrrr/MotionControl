@@ -313,7 +313,7 @@ namespace MotionControl
         /// <param name="reset">复位按钮输入点</param>
         /// <param name="stop">停止按钮输入点</param>
         /// <param name="estop">紧急停止按钮输入点</param>
-        void SetExternalTrigger(ushort card, ushort start, ushort reset, ushort stop, ushort estop);
+        void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop);
 
         /// <summary>
         /// 运动控制卡复位
