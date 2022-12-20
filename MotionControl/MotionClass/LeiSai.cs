@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace MotionControl
 {
@@ -855,7 +854,6 @@ namespace MotionControl
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, true, $"{state.Axis}轴定位地址{state.Position}，单轴阻塞绝对定位外部异常停止！（{stopwatch.Elapsed}）");
                                 throw new Exception($"{state.Axis}轴定位地址{state.Position}，单轴阻塞绝对定位外部异常停止！（{stopwatch.Elapsed}）");
-
                                 return;
                             }
                             if (CardLogEvent != null)
@@ -959,7 +957,6 @@ namespace MotionControl
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, true, $"{state.Axis}轴定位地址{state.Position}，单轴阻塞相对定位复位外部异常停止！（{stopwatch.Elapsed}）");
                                 throw new Exception($"{state.Axis}轴定位地址{state.Position}，单轴阻塞相对定位复位外部异常停止！ （{stopwatch.Elapsed}");
-
                                 return;
                             }
                             if (CardLogEvent != null)
@@ -1065,7 +1062,6 @@ namespace MotionControl
                                     if (CardLogEvent != null)
                                         CardLogEvent(DateTime.Now, true, $"{state.Axis}轴原点回归复位外部异常停止！（{stopwatch.Elapsed}）");
                                     throw new Exception($"{state.Axis}轴原点回归复位外部异常停止！（{stopwatch.Elapsed}）");
-
                                     return;
                                 }
                                 if (CardLogEvent != null)
@@ -1838,6 +1834,7 @@ namespace MotionControl
                             IMoveStateQueue.Remove(state);
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{axis}轴定位地址{position}，单轴阻塞绝对定位到位完成 （{stopwatch.Elapsed}）");
+                            return;
                         }
                         else
                         {
@@ -1961,6 +1958,7 @@ namespace MotionControl
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{axis}轴定位地址{position}，单轴阻塞相对定位到位完成：（{stopwatch.Elapsed}）");
                             IMoveStateQueue.Remove(state);
+                            return;
                         }
                         else
                         {
@@ -2592,7 +2590,7 @@ namespace MotionControl
         /// <param name="card">板卡号</param>
         /// <param name="t">ControlState 结构参数</param>
         /// <param name="time">超时时间</param>
-        public override void MoveLines(ushort card, ControlState t, int time)
+        public override void MoveLines(ushort card, ControlState t, int time = 0)
         {
             if (IsOpenCard)
             {
@@ -2698,7 +2696,6 @@ namespace MotionControl
                                     if (time != 0 && stopwatch.Elapsed.TotalMilliseconds > time)
                                         goto Timeout;
                                 } while (LTDMC.dmc_check_done_multicoor(Card_Number[card], Convert.ToUInt16(coordinate)) == 0);
-
                                 stopwatch.Stop();
                                 if (CoordinateSystemStates[coordinate] == 4)
                                 {

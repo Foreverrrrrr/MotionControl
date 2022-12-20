@@ -1,10 +1,6 @@
 ﻿using SQLiteHelper;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -95,7 +91,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡运行日志事件
         /// </summary>
-        public abstract event Action<DateTime,bool, string> CardLogEvent;
+        public abstract event Action<DateTime, bool, string> CardLogEvent;
 
         /// <summary>
         /// 运动控制板卡方法异常事件
@@ -268,7 +264,6 @@ namespace MotionControl
                         _axis = value;
 
                     }
-
                 }
             }
 
@@ -290,7 +285,6 @@ namespace MotionControl
                     {
                         _position = value;
                     }
-
                 }
             }
         }
@@ -389,7 +383,6 @@ namespace MotionControl
                 Type type = Type.GetType(Assemblyname + "." + modelname.ToString());
                 dynamic obj = type.Assembly.CreateInstance(type.ToString());
                 MotionBase classBase = obj as MotionBase;
-
                 return classBase;
             }
             catch (Exception ex)

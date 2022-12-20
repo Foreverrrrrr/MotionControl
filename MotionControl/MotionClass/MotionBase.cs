@@ -1,10 +1,6 @@
 ﻿using SQLiteHelper;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -95,7 +91,7 @@ namespace MotionControl
         /// <summary>
         /// 板卡运行日志事件
         /// </summary>
-        public abstract event Action<DateTime,bool, string> CardLogEvent;
+        public abstract event Action<DateTime, bool, string> CardLogEvent;
 
         /// <summary>
         /// 运动控制板卡方法异常事件
