@@ -66,6 +66,7 @@ namespace MotionControl
             this.button16 = new System.Windows.Forms.Button();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.button17 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -86,6 +87,7 @@ namespace MotionControl
             this.button2.TabIndex = 1;
             this.button2.Text = "伺服OFF";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -387,11 +389,22 @@ namespace MotionControl
             this.label9.TabIndex = 34;
             this.label9.Text = "坐标系状态";
             // 
+            // button17
+            // 
+            this.button17.Location = new System.Drawing.Point(94, 53);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(75, 23);
+            this.button17.TabIndex = 35;
+            this.button17.Text = "线程终结";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(856, 450);
+            this.Controls.Add(this.button17);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.textBox9);
             this.Controls.Add(this.button16);
@@ -473,6 +486,7 @@ namespace MotionControl
         private System.Windows.Forms.Button button16;
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button button17;
     }
 }
 

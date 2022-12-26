@@ -633,7 +633,10 @@ namespace MotionControl
                             {
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{state.Axis}轴定位地址{state.Position}，单轴绝对定位复位到位完成（{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 return;
                             }
                             else
@@ -742,7 +745,10 @@ namespace MotionControl
 
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{state.Axis}轴定位地址{state.Position}，单轴相对定位复位到位完成（{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 return;
                             }
                             else
@@ -843,7 +849,10 @@ namespace MotionControl
                         {
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{state.Axis}轴定位地址{state.Position}，单轴阻塞绝对定位复位到位完成（{stopwatch.Elapsed}）");
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             return;
                         }
                         else
@@ -946,7 +955,10 @@ namespace MotionControl
                         {
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{state.Axis}轴定位地址{state.Position}，单轴阻塞相对定位复位到位完成 （{stopwatch.Elapsed}）");
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             return;
                         }
                         else
@@ -1049,7 +1061,10 @@ namespace MotionControl
                             {
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{state.Axis}轴原点回归复位完成，零点误差：{AxisStates[state.Axis][0]} （{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 LTDMC.dmc_set_position_unit(Card_Number[0], state.Axis, 0);
                                 LTDMC.dmc_set_encoder_unit(Card_Number[0], state.Axis, 0);
                                 return;
@@ -1153,7 +1168,10 @@ namespace MotionControl
                         {
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{state.Axis}轴阻塞原点回归复位完成，零点误差：{AxisStates[state.Axis][0]} （{stopwatch.Elapsed}）");
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             LTDMC.dmc_set_position_unit(Card_Number[0], state.Axis, 0);
                             LTDMC.dmc_set_encoder_unit(Card_Number[0], state.Axis, 0);
                             return;
@@ -1293,7 +1311,10 @@ namespace MotionControl
                                     }
                                     if (CardLogEvent != null)
                                         CardLogEvent(DateTime.Now, false, $"{state.UsingAxisNumber}轴直线插补动作完成！({stopwatch.Elapsed})");
-                                    IMoveStateQueue.Remove(state);
+                                    lock (this)
+                                    {
+                                        IMoveStateQueue.Remove(state);
+                                    }
                                     return;
                                 }
                             Timeout:
@@ -1422,7 +1443,10 @@ namespace MotionControl
                             {
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{axis}轴定位地址{position}，单轴绝对定位到位完成 （{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 return;
                             }
                             else
@@ -1551,7 +1575,10 @@ namespace MotionControl
                             {
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{state.Axis}轴定位地址{state.Position}，单轴相对定位到位完成 （{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 return;
                             }
                             else
@@ -1831,7 +1858,10 @@ namespace MotionControl
                         stopwatch.Stop();
                         if (AxisStates[axis][AxisStates[axis].Length - 1] == 0 && LTDMC.dmc_check_success_encoder(Card_Number[0], axis) == 1)
                         {
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{axis}轴定位地址{position}，单轴阻塞绝对定位到位完成 （{stopwatch.Elapsed}）");
                             return;
@@ -1957,7 +1987,10 @@ namespace MotionControl
                         {
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{axis}轴定位地址{position}，单轴阻塞相对定位到位完成：（{stopwatch.Elapsed}）");
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             return;
                         }
                         else
@@ -2408,7 +2441,10 @@ namespace MotionControl
                                 CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{axis}轴原点回归完成，零点误差：{AxisStates[axis][0]} （{stopwatch.Elapsed}）");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 LTDMC.dmc_set_position_unit(Card_Number[0], axis, 0);
                                 LTDMC.dmc_set_encoder_unit(Card_Number[0], axis, 0);
                                 return;
@@ -2538,7 +2574,10 @@ namespace MotionControl
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                             if (CardLogEvent != null)
                                 CardLogEvent(DateTime.Now, false, $"{axis}轴阻塞原点回归完成，零点误差：{AxisStates[axis][0]} （{stopwatch.Elapsed}）");
-                            IMoveStateQueue.Remove(state);
+                            lock (this)
+                            {
+                                IMoveStateQueue.Remove(state);
+                            }
                             LTDMC.dmc_set_position_unit(Card_Number[0], axis, 0);
                             LTDMC.dmc_set_encoder_unit(Card_Number[0], axis, 0);
                             return;
@@ -2771,7 +2810,10 @@ namespace MotionControl
                                     }
                                     if (CardLogEvent != null)
                                         CardLogEvent(DateTime.Now, false, $"{control.UsingAxisNumber}轴直线插补动作完成！({stopwatch.Elapsed})");
-                                    IMoveStateQueue.Remove(state);
+                                    lock (this)
+                                    {
+                                        IMoveStateQueue.Remove(state);
+                                    }
                                     return;
                                 }
                             Timeout:
@@ -2964,7 +3006,10 @@ namespace MotionControl
                                 }
                                 if (CardLogEvent != null)
                                     CardLogEvent(DateTime.Now, false, $"{control.UsingAxisNumber}轴阻塞直线插补动作完成！({stopwatch.Elapsed})");
-                                IMoveStateQueue.Remove(state);
+                                lock (this)
+                                {
+                                    IMoveStateQueue.Remove(state);
+                                }
                                 return;
                             }
                         Timeout:
