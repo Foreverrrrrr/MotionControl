@@ -311,7 +311,6 @@ namespace MotionControl
         /// <param name="stop_mode">制动方式 0：减速停止，1：紧急停止</param>
         public override void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode)
         {
-
             if (IsOpenCard)
             {
                 if (axis < Axis.Length)
@@ -2232,7 +2231,6 @@ namespace MotionControl
         /// <summary>
         /// 外部IO单按钮触发事件设置
         /// </summary>
-        /// <param name="card">外部输入触发板卡号</param>
         /// <param name="start">启动按钮输入点</param>
         /// <param name="reset">复位按钮输入点</param>
         /// <param name="stop">停止按钮输入点</param>
