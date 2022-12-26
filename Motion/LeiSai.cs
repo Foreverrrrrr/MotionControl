@@ -311,7 +311,6 @@ namespace MotionControl
         /// <param name="stop_mode">制动方式 0：减速停止，1：紧急停止</param>
         public override void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode)
         {
-
             if (IsOpenCard)
             {
                 if (axis < Axis.Length)
