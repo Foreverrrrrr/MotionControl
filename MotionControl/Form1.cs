@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -10,11 +11,11 @@ namespace MotionControl
         public Form1()
         {
             InitializeComponent();
-            motion = MotionBase.GetClassType(MotionBase.CardName.LeiSai);
+            motion = MotionBase.GetClassType(MotionBase.CardName.LeiSaiEtherCat);
             motion.FactorValue = 20;
             motion.CardErrorMessageEvent += (i, message) =>
             {
-                Console.WriteLine(i.ToString(), message);
+                MessageBox.Show(message);
             };
             motion.OpenCard();
             motion.SetExternalTrigger(8, 9, 0, 0);
@@ -24,7 +25,7 @@ namespace MotionControl
         {
             motion.CardLogEvent += (i, ereeor, message) =>
             {
-                Console.WriteLine(i.ToString(), message);
+
                 this.Invoke(new Action(() =>
                 {
                     listBox1.Items.Insert(0, message);
@@ -52,6 +53,7 @@ namespace MotionControl
                         listBox1.Items.Insert(0, "启动按钮下降沿");
                     }));
                 });
+
             };
 
             motion.ResetPEvent += (t) =>
@@ -101,8 +103,8 @@ namespace MotionControl
 
         private void button3_MouseUp(object sender, MouseEventArgs e)
         {
-            motion.AxisStop(0, 0,false);
-            motion.AxisStop(1, 0, false);
+            motion.AxisStop(0, 1, true);
+            motion.AxisStop(1, 1, false);
         }
 
         private void button3_MouseDown(object sender, MouseEventArgs e)
@@ -119,8 +121,9 @@ namespace MotionControl
 
         private void button5_Click(object sender, EventArgs e)
         {
-            motion.MoveAbs(0, 10000, 2000000, 0);
-            motion.MoveAbs(1, 10000, 1000000, 0);
+            motion.MoveAbs(0, 0, 200000, 0);
+            motion.MoveAbs(1, 0, 200000, 0);
+
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -136,7 +139,12 @@ namespace MotionControl
 
         private void button8_Click(object sender, EventArgs e)
         {
-            motion.AwaitIOinput(0, 0, true, 3000);
+            Task.Run(() =>
+            {
+                motion.AwaitIOinput(0, 8, true, 0);
+                motion.AwaitIOinput(0, 9, true, 0);
+            });
+
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -156,32 +164,20 @@ namespace MotionControl
             {
                 while (true)
                 {
-                    try
-                    {
-                        motion.AwaitMoveAbs(0, 7000000, 4000000, 0);
-                        motion.AwaitMoveAbs(0, 0, 4000000, 0);
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                        throw;
-                    }
+
+                    motion.AwaitMoveAbs(0, 700000, 400000, 0);
+                    motion.AwaitMoveAbs(0, 0, 400000, 0);
+
                 }
             });
             Task.Run(() =>
             {
                 while (true)
                 {
-                    try
-                    {
-                        motion.AwaitMoveAbs(1, 1000000, 1000000, 0);
-                        motion.AwaitMoveAbs(1, 0, 1000000, 0);
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                        throw;
-                    }
+
+                    motion.AwaitMoveAbs(1, 100000, 100000, 0);
+                    motion.AwaitMoveAbs(1, 0, 100000, 0);
+
                 }
             });
         }
@@ -190,13 +186,25 @@ namespace MotionControl
         {
             Task.Run(() =>
             {
-                motion.AwaitMoveRel(0, 10000, 50000, 0);
-                motion.AwaitMoveRel(0, 20000, 10000, 0);
+                //while (true)
+                //{
+                //Thread.Sleep(500);
+                motion.AwaitMoveRel(0, 50000, 500000, 0);
+                //Thread.Sleep(500);
+                motion.AwaitMoveRel(0, -20000, 100000, 0);
+                //}
+
             });
             Task.Run(() =>
             {
-                motion.AwaitMoveRel(1, 20000, 60000, 0);
-                motion.AwaitMoveRel(1, 10000, 10000, 0);
+                //while (true)
+                //{
+                //Thread.Sleep(500);
+                motion.AwaitMoveRel(1, 20000, 600000, 0);
+                //Thread.Sleep(500);
+                motion.AwaitMoveRel(1, -50000, 100000, 0);
+                //}
+
             });
         }
 
@@ -218,18 +226,46 @@ namespace MotionControl
             }
         }
 
+        private Thread thread;
         private void button16_Click(object sender, EventArgs e)
         {
-            Task.Run(() =>
+            thread = new Thread(Movlin);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        private void Movlin()
+        {
+            try
             {
                 while (true)
                 {
-                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { -1000000, 0 }, Speed = 10000000, locationModel = 1 });
-                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { 0, -1000000 }, Speed = 10000000, locationModel = 1});
+                    //Thread.Sleep(1000);
+                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { -100000, 0 }, Speed = 200000, locationModel = 1 });
+                    //Thread.Sleep(1000);
+                    motion.AwaitMoveLines(0, new MotionBase.ControlState { Acc = 0.5, Dcc = 0.5, UsingAxisNumber = 2, Axis = new ushort[] { 0, 1 }, Position = new double[] { 0, -100000 }, Speed = 200000, locationModel = 1 });
 
                 }
+            }
+            catch (ThreadAbortException ex)
+            {
+                motion.AxisStop(0, 1, true);
+                return;
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
 
-            });
+        private void button2_Click(object sender, EventArgs e)
+        {
+            motion.AxisOff();
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            thread.Abort();
         }
     }
 }

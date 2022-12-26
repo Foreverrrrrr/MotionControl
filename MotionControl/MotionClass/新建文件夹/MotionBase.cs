@@ -146,26 +146,6 @@ namespace MotionControl
         public virtual event Action<DateTime> EStopNEvent;
 
         /// <summary>
-        /// 光栅上升沿触发事件
-        /// </summary>
-        public virtual event Action<DateTime> GratingPEvent;
-
-        /// <summary>
-        /// 光栅下降沿触发事件
-        /// </summary>
-        public virtual event Action<DateTime> GratingNEvent;
-
-        /// <summary>
-        /// 门禁上升沿触发
-        /// </summary>
-        public virtual event Action<DateTime> EntrancePEvent;
-
-        /// <summary>
-        /// 门禁下降沿触发
-        /// </summary>
-        public virtual event Action<DateTime> EntranceNEvent;
-
-        /// <summary>
         /// 轴定位状态结构
         /// </summary>
         public struct MoveState
@@ -207,7 +187,7 @@ namespace MotionControl
             /// <summary>
             /// 原点回归模式
             /// </summary>
-            public short HomeModel { get; set; }
+            public ushort HomeModel { get; set; }
             /// <summary>
             /// 加速度
             /// </summary>
@@ -693,7 +673,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
+        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
 
         /// <summary>
         /// 单轴阻塞原点回归
@@ -705,7 +685,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
+        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
 
         /// <summary>
         /// 设置伺服对象字典
@@ -782,7 +762,5 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         public abstract void AxisReset(ushort axis);
         public abstract void WaitAxis(int[] axis);
-        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
-        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop);
     }
 }

@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace MotionControl
 {
@@ -244,7 +250,7 @@ namespace MotionControl
             }
         }
 
-        public override void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0)
+        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
             {
@@ -303,7 +309,7 @@ namespace MotionControl
                         CardLogEvent(DateTime.Now, false, $"{axis}轴阻塞原点回归启动，速度{home_speed}pulse/S，原点回归模式{home_model}");
                     stopwatch.Restart();
                     CMCDLL_NET.MCF_Search_Home_Stop_Time_Net(axis, 0, 0);
-                    CMCDLL_NET.MCF_Search_Home_Set_Net(axis, (ushort)home_model, 0, 0, 0, home_speed, home_speed, 0, 0, 0);
+                    CMCDLL_NET.MCF_Search_Home_Set_Net(axis, home_model, 0, 0, 0, home_model / acc, home_model / acc, 0, 0, 0);
                     CMCDLL_NET.MCF_Search_Home_Start_Net(axis, 0);
                 }
                 Thread.Sleep(50);
@@ -446,6 +452,7 @@ namespace MotionControl
                 else
                     throw new Exception($"{axis}轴定位地址{position}，单轴阻塞相对定位外部异常停止！（{stopwatch.Elapsed}）");
                 return;
+
             }
         }
 
@@ -533,7 +540,7 @@ namespace MotionControl
                     ushort a = (ushort)(stop_mode == 0 ? 1 : 0);
                     CMCDLL_NET.MCF_Axis_Stop_Net(axis, a);
                     CMCDLL_NET.MCF_Clear_Axis_State_Net(axis);
-                    //Stop_sign[axis] = true;
+                    Stop_sign[axis] = true;
                 }
                 else
                 {
@@ -677,11 +684,11 @@ namespace MotionControl
                     doubles[7] = 15;
                     break;
             }
-            //Console.WriteLine(pos);
+            Console.WriteLine(pos);
             doubles[0] = Convert.ToDouble(pos);
             doubles[1] = Convert.ToDouble(Encoderpos);
-            doubles[2] = vel[0];
-            doubles[3] = TargetLocation[axis];
+            doubles[2] = TargetLocation[axis];
+            doubles[3] = 0;
             doubles[5] = AxisMachine[axis];
             doubles[6] = AxisMoveModel[axis];
             //doubles[4] = indog == 1 ? 0 : 1;
@@ -798,7 +805,7 @@ namespace MotionControl
             throw new NotImplementedException();
         }
 
-        public override void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
             {
@@ -840,7 +847,7 @@ namespace MotionControl
                     Dcc = dcc,
                     Position = 0,
                     Movetype = 5,
-                    HomeModel = (short)home_model,
+                    HomeModel = home_model,
                     Home_off = offpos,
                     OutTime = timeout,
                     Handle = DateTime.Now,
@@ -857,7 +864,7 @@ namespace MotionControl
                         CardLogEvent(DateTime.Now, false, $"{axis}轴原点回归启动，速度{home_speed}pulse/S，原点回归模式{home_model}");
                     stopwatch.Restart();
                     CMCDLL_NET.MCF_Search_Home_Stop_Time_Net(axis, 0, 0);
-                    CMCDLL_NET.MCF_Search_Home_Set_Net(axis, (ushort)home_model, 0, 0, 0, home_speed, home_speed, 0, 0, 0);
+                    CMCDLL_NET.MCF_Search_Home_Set_Net(axis, home_model, 0, 0, 0, home_speed, home_speed, 0, 0, 0);
                     CMCDLL_NET.MCF_Search_Home_Start_Net(axis, 0);
                 }
                 Thread.Sleep(50);
@@ -912,7 +919,7 @@ namespace MotionControl
             }
         }
 
-        public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.1, double dec = 0.1)
+        public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.5, double dec = 0.5)
         {
             if (IsOpenCard)
             {
@@ -924,15 +931,22 @@ namespace MotionControl
                         throw new Exception($"{axis}轴驱动器报错，JOG启动失败！");
                     return;
                 }
+                if (AxisStates[axis][4] == 0 && AxisStates[axis][7] == 0)
+                {
+                    if (CardLogEvent != null)
+                        CardLogEvent(DateTime.Now, true, $"{axis}轴运动中，JOG启动失败！");
+                    else
+                        throw new Exception($"{axis}轴运动中，JOG启动失败！");
+                    return;
+                }
                 if (CardLogEvent != null)
-                    //CardLogEvent(DateTime.Now, false, $"{axis}轴JOG运动启动，速度{speed}pulse/S");
+                    CardLogEvent(DateTime.Now, false, $"{axis}轴JOG运动启动，速度{speed}pulse/S");
                 AxisMachine[axis] = 3;
                 AxisMoveModel[axis] = 2;
-                //if (posi_mode == 0)
-                //    CMCDLL_NET.MCF_JOG_Net(axis, -speed, Math.Abs(speed / acc));
-                //else
-                //CMCDLL_NET.MCF_Uniaxial_dMaxV_Change_Net(axis, speed);
-                CMCDLL_NET.MCF_JOG_Net(axis, speed, Math.Abs(speed / acc));
+                if (posi_mode == 0)
+                    CMCDLL_NET.MCF_JOG_Net(axis, -speed, Math.Abs(speed / acc));
+                else
+                    CMCDLL_NET.MCF_JOG_Net(axis, speed, Math.Abs(speed / acc));
             }
             else
             {
@@ -1106,6 +1120,7 @@ namespace MotionControl
                                         throw new Exception($"{control.UsingAxisNumber}轴直线插补外部异常停止！（{stopwatch.Elapsed}）");
                                     return;
                                 });
+
                             }
                         }
                         catch (ThreadAbortException ex)
@@ -1494,7 +1509,7 @@ namespace MotionControl
                         CardLogEvent(DateTime.Now, false, $"{item.Axis}轴阻塞原点回归启动，速度{item.Speed}pulse/S，原点回归模式{item.HomeModel}");
                     stopwatch.Restart();
                     CMCDLL_NET.MCF_Search_Home_Stop_Time_Net(item.Axis, 0, 0);
-                    CMCDLL_NET.MCF_Search_Home_Set_Net(item.Axis, (ushort)item.HomeModel, 0, 0, 0, item.Speed, item.Speed / 2, 0, 0, 0);
+                    CMCDLL_NET.MCF_Search_Home_Set_Net(item.Axis, item.HomeModel, 0, 0, 0, item.Speed, item.Speed / 2, 0, 0, 0);
                     CMCDLL_NET.MCF_Search_Home_Start_Net(item.Axis, 0);
                     Thread.Sleep(50);
 
@@ -1586,7 +1601,7 @@ namespace MotionControl
                         CardLogEvent(DateTime.Now, false, $"{item.Axis}轴原点回归启动，速度{item.Speed}pulse/S，原点回归模式{item.HomeModel}");
                     stopwatch.Restart();
                     CMCDLL_NET.MCF_Search_Home_Stop_Time_Net(item.Axis, 0, 0);
-                    CMCDLL_NET.MCF_Search_Home_Set_Net(item.Axis, (ushort)item.HomeModel, 0, 0, 0, item.Speed, item.Speed / 2, 0, 0, 0);
+                    CMCDLL_NET.MCF_Search_Home_Set_Net(item.Axis, item.HomeModel, 0, 0, 0, item.Speed, item.Speed / 2, 0, 0, 0);
                     CMCDLL_NET.MCF_Search_Home_Start_Net(item.Axis, 0);
                     Thread.Sleep(50);
                     Task.Run(() =>
@@ -1998,7 +2013,7 @@ namespace MotionControl
                         return;
                     }
                 }
-
+                
                 var coordinate = Array.IndexOf(CoordinateSystemStates, (short)4);
                 CoordinateSystemStates[coordinate] = 0;
                 if (coordinate != -1)
@@ -2175,7 +2190,6 @@ namespace MotionControl
                     Motion_Lok = new object[Axisquantity];
                     for (int i = 0; i < Axis.Length; i++)
                     {
-                        CMCDLL_NET.MCF_Set_Pulse_Mode_Net((ushort)i, 2);//脉冲输出模式
                         Task_Token[i] = new CancellationTokenSource();
                         cancellation_Token[i] = Task_Token[i].Token;
                         Stop_sign[i] = false;
@@ -2218,7 +2232,7 @@ namespace MotionControl
             Stopwatch stopwatch = new Stopwatch();
             while (true)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(30);
                 List<bool> inputList = new List<bool>();
                 List<bool> outputList = new List<bool>();
                 stopwatch.Restart();
@@ -2236,7 +2250,7 @@ namespace MotionControl
                 IO_Input = inputList.ToArray();
                 IO_Output = outputList.ToArray();
                 stopwatch.Stop();
-                // Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
+                Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
                 AutoReadEvent.WaitOne();
             }
         }
@@ -2251,7 +2265,7 @@ namespace MotionControl
         /// </summary>
         public override void SetAxis_iniFile(string path)
         {
-            string[] lines = System.IO.File.ReadAllLines(path);
+            Span<string> lines = System.IO.File.ReadAllLines(path);
             string pattern = "=(.*)";
             string io = null;
             for (int i = 0; i < lines.Length; i++)
@@ -2588,23 +2602,6 @@ namespace MotionControl
         }
 
         public override void WaitAxis(int[] axis)
-        {
-            for (int i = 0; i < axis.Length; i++)
-            {
-                do
-                {
-                    Thread.Sleep(50);
-                } while (AxisStates[axis[i]][4] != 0 && AxisStates[axis[i]][7] != 0);
-            }
-            Thread.Sleep(200);
-        }
-
-        public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop)
         {
             throw new NotImplementedException();
         }

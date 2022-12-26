@@ -124,8 +124,15 @@
     <Compile Include="Form2.Designer.cs">
       <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form3.Designer.cs">
+      <DependentUpon>Form3.cs</DependentUpon>
+    </Compile>
     <Compile Include="MotionClass\IControlBaseInterface.cs" />
-    <Compile Include="MotionClass\LeiSai.cs" />
+    <Compile Include="MotionClass\LeiSaiEtherCAT.cs" />
+    <Compile Include="MotionClass\LeiSaiPulse.cs" />
     <Compile Include="MotionClass\LTDMC.cs" />
     <Compile Include="MotionClass\MCDLL_NET.cs" />
     <Compile Include="MotionClass\MoShengTai.cs" />
