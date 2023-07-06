@@ -16,7 +16,7 @@ namespace MotionControl
             motion.FactorValue = 20;
             motion.OpenCard();
             motion.AxisOn();
-            motion.SetExternalTrigger(0, 1, 2, 3);
+            motion.SetExternalTrigger(0, 1, 2, 3, 4, 5, 6);
             motion.StartNEvent += (x) =>
             {
                 Console.WriteLine("启动");

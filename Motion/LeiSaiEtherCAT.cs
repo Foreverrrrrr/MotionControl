@@ -168,9 +168,8 @@ namespace MotionControl
         /// 运动控制类方法内部Taks线程令牌
         /// </summary>
         public override CancellationTokenSource[] Task_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        /// <inheritdoc/>
         public override CancellationToken[] cancellation_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ushort CANNumber { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override ushort CANState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         /// <summary>
         /// 板卡运行日志事件
@@ -3075,11 +3074,6 @@ namespace MotionControl
         }
 
         public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Set_CAN_State(ushort card, ushort can_num, bool state)
         {
             throw new NotImplementedException();
         }

@@ -365,9 +365,13 @@ namespace MotionControl
             /// </summary>
             LeiSaiEtherCat,
             /// <summary>
-            /// 雷赛脉冲卡
+            /// 雷赛3000-5000系列脉冲卡
             /// </summary>
             LeiSaiPulse,
+            /// <summary>
+            /// 雷赛1000系列脉冲卡
+            /// </summary>
+            LeiSaiPulse_1000B,
             /// <summary>
             /// 高川板卡
             /// </summary>
@@ -382,6 +386,16 @@ namespace MotionControl
         /// 板卡厂商
         /// </summary>
         public static string CardBrand { get; set; }
+
+        /// <summary>
+        /// CAN总线节点数
+        /// </summary>
+        public abstract ushort CANNumber { get; set; }
+
+        /// <summary>
+        /// CAN总线状态
+        /// </summary>
+        public abstract ushort CANState { get; set; }
 
         /// <summary>
         /// 轴定位状态集合
@@ -669,6 +683,8 @@ namespace MotionControl
         /// <param name="estop">紧急停止按钮输入点</param>
         public abstract void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop);
 
+
+        //public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
         /// <summary>
         /// 读取总线状态
         /// </summary>
@@ -782,7 +798,17 @@ namespace MotionControl
         /// <param name="axis">轴号</param>
         public abstract void AxisReset(ushort axis);
         public abstract void WaitAxis(int[] axis);
+
         public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
+
         public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop);
+
+        /// <summary>
+        /// 雷赛脉冲系列CAN扩展模块通讯设置
+        /// </summary>
+        /// <param name="card">卡号</param>
+        /// <param name="can_num">CAN节点数</param>
+        /// <param name="state">CAN连接状态 false==断开 true==连接</param>
+        public abstract void Set_CAN_State(ushort card, ushort can_num, bool state);
     }
 }

@@ -72,26 +72,43 @@ namespace MotionControl
         public bool[] Special_io { get; set; }
         private ushort[] ThisStateMac { get; set; }
         private double[] TargetLocation { get; set; }
+        /// <inheritdoc/>
         public override bool[] IO_Input { get; set; }
+        /// <inheritdoc/>
         public override bool[] IO_Output { get; set; }
+        /// <inheritdoc/>
         public override ushort[] Card_Number { get; set; }
+        /// <inheritdoc/>
         public override ushort[] Axis { get; set; }
+        /// <inheritdoc/>
         public override int[] EtherCATStates { get; set; }
+        /// <inheritdoc/>
         public override double[][] AxisStates { get; set; }
+        /// <inheritdoc/>
         public override Thread[] Read_ThreadPool { get; set; }
+        /// <inheritdoc/>
         public override ManualResetEvent AutoReadEvent { get; set; }
+        /// <inheritdoc/>
         public override CancellationTokenSource[] Task_Token { get; set; }
+        /// <inheritdoc/>
         public override CancellationToken[] cancellation_Token { get; set; }
+        /// <inheritdoc/>
         public override ushort FactorValue { get; set; }
+        /// <inheritdoc/>
         public override double Speed { get; set; }
+        /// <inheritdoc/>
         public override double Acc { get; set; }
+        /// <inheritdoc/>
         public override double Dec { get; set; }
+        /// <inheritdoc/>
         public override int[][] Axis_IO { get; set; }
+        /// <inheritdoc/>
         public override short[] CoordinateSystemStates { get; set; } = new short[2];
+        /// <inheritdoc/>
         public override bool IsOpenCard { get; set; }
+        /// <inheritdoc/>
         public override int Axisquantity { get; set; }
-        public override ushort CANNumber { get ; set; }
-        public override ushort CANState { get; set ; }
+        /// <inheritdoc/>
 
         public override event Action<DateTime, bool, string> CardLogEvent;
 
@@ -150,7 +167,7 @@ namespace MotionControl
                 AutoReadEvent.WaitOne();
             }
         }
-
+        /// <inheritdoc/>
         public override void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0)
         {
             if (IsOpenCard)
@@ -311,7 +328,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void AwaitMoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (IsOpenCard)
@@ -552,6 +569,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
+        /// <inheritdoc/>
         public override void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
@@ -836,6 +854,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
+        /// <inheritdoc/>
         public override void AwaitMoveLines(ushort card, ControlState t, int time = 0)
         {
             if (IsOpenCard)
@@ -1125,6 +1144,7 @@ namespace MotionControl
                 throw new Exception($"请先调用OpenCard方法！");
             }
         }
+        /// <inheritdoc/>
         public override void AwaitMoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (IsOpenCard)
@@ -1247,17 +1267,17 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void AxisBasicSet(ushort axis, double equiv, double startvel, double speed, double acc, double dec, double stopvel, double s_para, int posi_mode, int stop_mode)
         {
             throw new NotImplementedException();
         }
-
+        /// <inheritdoc/>
         public override void AxisErrorReset(ushort axis)
         {
             throw new NotImplementedException();
         }
-
+        /// <inheritdoc/>
         public override void AxisOff(ushort card, ushort axis)
         {
             if (IsOpenCard)
@@ -1276,7 +1296,7 @@ namespace MotionControl
                     throw new Exception("请先初始化板卡再下使能轴");
             }
         }
-
+        /// <inheritdoc/>
         public override void AxisOff()
         {
             if (IsOpenCard)
@@ -1303,7 +1323,7 @@ namespace MotionControl
                     throw new Exception("请先初始化板卡再下使能轴");
             }
         }
-
+        /// <inheritdoc/>
         public override void AxisOn(ushort card, ushort axis)
         {
             if (IsOpenCard)
@@ -1323,7 +1343,7 @@ namespace MotionControl
                     throw new Exception("请先初始化板卡再使能轴！");
             }
         }
-
+        /// <inheritdoc/>
         public override void AxisOn()
         {
             if (IsOpenCard)
@@ -1351,7 +1371,7 @@ namespace MotionControl
                     throw new Exception("请先初始化板卡再使能轴！");
             }
         }
-
+        /// <inheritdoc/>
         public override void AxisReset(ushort axis)
         {
             Stop_sign[axis] = false;
@@ -1359,7 +1379,7 @@ namespace MotionControl
             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
             LTDMC.dmc_write_erc_pin(Card_Number[0], axis, 1);
         }
-
+        /// <inheritdoc/>
         public override void AxisStop(ushort axis, int stop_mode = 0, bool all = false)
         {
             if (IsOpenCard)
@@ -1428,7 +1448,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void CloseCard()
         {
             AutoReadEvent.Reset();
@@ -1441,7 +1461,7 @@ namespace MotionControl
             CardErrorMessage(LTDMC.dmc_board_close());
             Thismotion = null;
         }
-
+        /// <inheritdoc/>
         public override bool[] Getall_IOinput(ushort card)
         {
             if (IsOpenCard)
@@ -1464,7 +1484,7 @@ namespace MotionControl
             }
             return IO_Input;
         }
-
+        /// <inheritdoc/>
         public override bool[] Getall_IOoutput(ushort card)
         {
             if (IsOpenCard)
@@ -1497,7 +1517,7 @@ namespace MotionControl
             }
             return IO_Output;
         }
-
+        /// <inheritdoc/>
         public override int[] GetAxisExternalio(ushort axis)
         {
             int[] bools = new int[7];
@@ -1521,7 +1541,7 @@ namespace MotionControl
             }
             return bools;
         }
-
+        /// <inheritdoc/>
         public override double[] GetAxisState(ushort axis)
         {
             ushort[] state = new ushort[2];
@@ -1552,7 +1572,7 @@ namespace MotionControl
             }
             return doubles;
         }
-
+        /// <inheritdoc/>
         public override int[] GetEtherCATState(ushort card_number)
         {
             throw new NotImplementedException();
@@ -1665,7 +1685,8 @@ namespace MotionControl
                 else
                     throw new Exception($"请先调用OpenCard方法！");
             }
-        }
+        } 
+        /// <inheritdoc/>
         public override void MoveAbs(ushort axis, double position, double speed, int time = 0)
         {
             if (IsOpenCard)
@@ -1790,7 +1811,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void MoveCircle_Center(ushort card, ControlState t, int time = 0)
         {
             throw new NotImplementedException();
@@ -1916,7 +1937,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.2, double dcc = 0.2, double offpos = 0)
         {
             if (IsOpenCard)
@@ -2058,7 +2079,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void MoveJog(ushort axis, double speed, int posi_mode, double acc = 0.5, double dec = 0.5)
         {
             if (IsOpenCard)
@@ -2259,6 +2280,7 @@ namespace MotionControl
                 throw new Exception($"请先调用OpenCard方法！");
             }
         }
+        /// <inheritdoc/>
         public override void MoveLines(ushort card, ControlState t, int time = 0)
         {
             if (IsOpenCard)
@@ -2558,7 +2580,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void MoveRel(ushort axis, double position, double speed, int time = 0)
         {
             if (IsOpenCard)
@@ -2683,7 +2705,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void MoveReset(ushort axis)
         {
             if (IsOpenCard)
@@ -2724,7 +2746,7 @@ namespace MotionControl
         {
             throw new NotImplementedException();
         }
-
+        /// <inheritdoc/>
         public override bool OpenCard()
         {
             lock (this)
@@ -2745,8 +2767,8 @@ namespace MotionControl
                     ushort output = 0;
                     CardErrorMessage(LTDMC.dmc_get_total_axes(Card_Number[0], ref totalaxis));
                     //CardErrorMessage(LTDMC.dmc_get_total_ionum(Card_Number[0], ref input, ref output));
-                    IO_Input = new bool[32];
-                    IO_Output = new bool[32];
+                    IO_Input = new bool[20];
+                    IO_Output = new bool[20];
                     Axisquantity = (int)totalaxis;
                     Motion_Lok = new object[Axisquantity];
                     ThisStateMac = new ushort[Axisquantity];
@@ -2799,28 +2821,28 @@ namespace MotionControl
                 }
             }
         }
-
+        /// <inheritdoc/>
         public override void ResetCard(ushort card, ushort reset)
         {
             LTDMC.dmc_board_reset();
             Thread.Sleep(5000);
         }
-
+        /// <inheritdoc/>
         public override void SetAxis_iniFile(string path = "AXIS.ini")
         {
             CardErrorMessage(LTDMC.dmc_download_configfile(Card_Number[0], path));
         }
-
+        /// <inheritdoc/>
         public override void SetbjectDictionary(ushort card, ushort etherCATLocation, ushort primeindex, ushort wordindexing, ushort bitlength, int value)
         {
             throw new NotImplementedException();
         }
-
+        /// <inheritdoc/>
         public override void SetEtherCAT_eniFiel()
         {
             throw new NotImplementedException();
         }
-
+        /// <inheritdoc/>
         public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop)
         {
             Special_io = new bool[32];
@@ -2958,7 +2980,7 @@ namespace MotionControl
                     throw new Exception($"请先调用OpenCard方法！");
             }
         }
-
+        /// <inheritdoc/>
         public override void WaitAxis(int[] axis)
         {
             if (IsOpenCard)
@@ -2973,7 +2995,7 @@ namespace MotionControl
 
             }
         }
-
+        /// <inheritdoc/>
         public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
         {
             Special_io = new bool[32];
@@ -3090,7 +3112,7 @@ namespace MotionControl
                 }
             });
         }
-
+        /// <inheritdoc/>
         public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop)
         {
             Special_io = new bool[32];
@@ -3173,19 +3195,6 @@ namespace MotionControl
                     }
                 }
             });
-        }
-
-        public override void Set_CAN_State(ushort card, ushort can_num, bool state)
-        {
-           if (IsOpenCard)
-            {
-                ushort c_num = 0;
-                ushort c_state = 0;
-                LTDMC.nmc_set_connect_state(card, can_num, (ushort)(state == true ? 1 : 0), 0);
-                LTDMC.nmc_get_connect_state(card, ref c_num, ref c_state);
-                CANNumber = c_num;
-                CANState= c_state;
-            }
         }
     }
 }

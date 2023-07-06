@@ -70,7 +70,7 @@ namespace MotionControl
         ///<para>double[][4]= 轴运动到位 0=运动中 1=轴停止</para>
         ///<para>double[][5]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态</para>
         ///<para>double[][6]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue</para>
-        ///<para>double[][7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止 10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止</para>
+        ///<para>double[][7]= 轴停止原因获取0：正常停止 1：ALM 立即停止  2：ALM 减速停止 3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止 10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止</para>
         /// </summary>
         public abstract double[][] AxisStates { get; set; }
         /// <summary>
@@ -81,12 +81,19 @@ namespace MotionControl
         /// <summary>
         /// 数据读取后台线程
         /// </summary>
-        public abstract Thread Read_t1 { get; set; }
+        public abstract Thread[] Read_ThreadPool { get; set; }
 
         /// <summary>
         /// 数据读取线程管理
         /// </summary>
         public abstract ManualResetEvent AutoReadEvent { get; set; }
+
+        /// <summary>
+        /// 运动控制类方法内部Taks线程令牌
+        /// </summary>
+        public abstract CancellationTokenSource[] Task_Token { get; set; }
+        /// <inheritdoc/>
+        public abstract CancellationToken[] cancellation_Token { get; set; }
 
         /// <summary>
         /// 板卡运行日志事件
@@ -139,6 +146,26 @@ namespace MotionControl
         public virtual event Action<DateTime> EStopNEvent;
 
         /// <summary>
+        /// 光栅上升沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> GratingPEvent;
+
+        /// <summary>
+        /// 光栅下降沿触发事件
+        /// </summary>
+        public virtual event Action<DateTime> GratingNEvent;
+
+        /// <summary>
+        /// 门禁上升沿触发
+        /// </summary>
+        public virtual event Action<DateTime> EntrancePEvent;
+
+        /// <summary>
+        /// 门禁下降沿触发
+        /// </summary>
+        public virtual event Action<DateTime> EntranceNEvent;
+
+        /// <summary>
         /// 轴定位状态结构
         /// </summary>
         public struct MoveState
@@ -180,7 +207,7 @@ namespace MotionControl
             /// <summary>
             /// 原点回归模式
             /// </summary>
-            public ushort HomeModel { get; set; }
+            public short HomeModel { get; set; }
             /// <summary>
             /// 加速度
             /// </summary>
@@ -242,7 +269,6 @@ namespace MotionControl
                     {
                         _positions = value;
                     }
-
                 }
             }
             /// <summary>
@@ -335,9 +361,17 @@ namespace MotionControl
         public enum CardName
         {
             /// <summary>
-            /// 雷赛板卡
+            /// 雷赛总线卡
             /// </summary>
-            LeiSai,
+            LeiSaiEtherCat,
+            /// <summary>
+            /// 雷赛3000-5000系列脉冲卡
+            /// </summary>
+            LeiSaiPulse,
+            /// <summary>
+            /// 雷赛1000系列脉冲卡
+            /// </summary>
+            LeiSaiPulse_1000B,
             /// <summary>
             /// 高川板卡
             /// </summary>
@@ -547,7 +581,7 @@ namespace MotionControl
         ///double[4]= 轴运动到位 0=运动中 1=轴停止
         ///double[5]= 轴状态机0：轴处于未启动状态 1：轴处于启动禁止状态 2：轴处于准备启动状态 3：轴处于启动状态 4：轴处于操作使能状态 5：轴处于停止状态 6：轴处于错误触发状态 7：轴处于错误状态
         ///double[6]= 轴运行模式0：空闲 1：Pmove 2：Vmove 3：Hmove 4：Handwheel 5：Ptt / Pts 6：Pvt / Pvts 10：Continue
-        ///double[7]= 轴停止原因获取0：正常停止  3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
+        ///double[7]= 轴停止原因获取0：正常停止 1：ALM 立即停止  2：ALM 减速停止 3：LTC 外部触发立即停止  4：EMG 立即停止  5：正硬限位立即停止  6：负硬限位立即停止  7：正硬限位减速停止  8：负硬限位减速停止  9：正软限位立即停止  
         ///10：负软限位立即停止11：正软限位减速停止  12：负软限位减速停止  13：命令立即停止  14：命令减速停止  15：其它原因立即停止  16：其它原因减速停止  17：未知原因立即停止  18：未知原因减速停止
         /// </returns>
         public abstract double[] GetAxisState(ushort axis);
@@ -663,7 +697,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        public abstract void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
 
         /// <summary>
         /// 单轴阻塞原点回归
@@ -675,7 +709,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        public abstract void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
 
         /// <summary>
         /// 设置伺服对象字典
@@ -751,5 +785,11 @@ namespace MotionControl
         /// </summary>
         /// <param name="axis">轴号</param>
         public abstract void AxisReset(ushort axis);
+        /// <inheritdoc/>
+        public abstract void WaitAxis(int[] axis);
+        /// <inheritdoc/>
+        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
+        /// <inheritdoc/>
+        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop);
     }
 }
