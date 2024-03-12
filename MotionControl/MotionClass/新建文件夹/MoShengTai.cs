@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-namespace MotionClass
+namespace MotionControl
 {
     public sealed class MoShengTai : MotionBase
     {
@@ -135,9 +141,6 @@ namespace MotionClass
         /// </summary>
         public override CancellationTokenSource[] Task_Token { get; set; }
         public override CancellationToken[] cancellation_Token { get; set; }
-        public override bool CAN_IsOpen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override double[] ADC_RealTime_DA { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override double[] ADC_RealTime_AD { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public MoShengTai()
         {
@@ -2010,7 +2013,7 @@ namespace MotionClass
                         return;
                     }
                 }
-
+                
                 var coordinate = Array.IndexOf(CoordinateSystemStates, (short)4);
                 CoordinateSystemStates[coordinate] = 0;
                 if (coordinate != -1)
@@ -2599,46 +2602,6 @@ namespace MotionClass
         }
 
         public override void WaitAxis(int[] axis)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Set_IOoutput_Enum(ushort card, OutPut indexes, bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void AwaitIOinput_Enum(ushort card, InPuts indexes, bool waitvalue, int timeout = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster1, ushort raster2, ushort entrance1, ushort entrance2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Set_DA(ushort card, ushort channel_number, double voltage_values)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double Read_DA(ushort card, ushort channel_number)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double Read_AD(ushort card, ushort channel_number)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Deploy_CAN(ushort card, ushort can_num, bool can_state, ushort can_baud = 0)
         {
             throw new NotImplementedException();
         }

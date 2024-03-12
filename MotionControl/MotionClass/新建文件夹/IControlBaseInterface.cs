@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 
 
-namespace MotionClass
+namespace MotionControl
 {
     /// <summary>
     /// 运动控制接口

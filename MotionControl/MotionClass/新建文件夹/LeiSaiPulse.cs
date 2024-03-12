@@ -5,13 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MotionClass
+namespace MotionControl
 {
     public class LeiSaiPulse : MotionBase
-    {
-        /// <summary>
-        /// 启动按钮上升沿触发事件
-        /// </summary>
+    {/// <summary>
+     /// 启动按钮上升沿触发事件
+     /// </summary>
         public override event Action<DateTime> StartPEvent;
 
         /// <summary>
@@ -48,27 +47,6 @@ namespace MotionClass
         /// 紧急停止按钮下降沿触发事件
         /// </summary>
         public override event Action<DateTime> EStopNEvent;
-
-        /// <summary>
-        /// 光栅上升沿触发事件
-        /// </summary>
-        public override event Action<DateTime> RasterPEvent;
-
-        /// <summary>
-        /// 光栅按钮下降沿触发事件
-        /// </summary>
-        public override event Action<DateTime> RasterNEvent;
-
-        /// <summary>
-        /// 门禁上升沿触发事件
-        /// </summary>
-        public override event Action<DateTime> EntrancePEvent;
-
-        /// <summary>
-        /// 门禁按钮下降沿触发事件
-        /// </summary>
-        public override event Action<DateTime> EntranceNEvent;
-
         /// <summary>
         /// 特殊IO
         /// </summary>
@@ -93,9 +71,6 @@ namespace MotionClass
         public override short[] CoordinateSystemStates { get; set; } = new short[2];
         public override bool IsOpenCard { get; set; }
         public override int Axisquantity { get; set; }
-        public override bool CAN_IsOpen { get; set; }
-        public override double[] ADC_RealTime_DA { get; set; } = new double[2];
-        public override double[] ADC_RealTime_AD { get; set; } = new double[4];
 
         public override event Action<DateTime, bool, string> CardLogEvent;
 
@@ -111,26 +86,21 @@ namespace MotionClass
 
         private void ReadIO()
         {
-            ADC_RealTime_AD = new double[4];
-            ADC_RealTime_DA = new double[4];
             AxisStates = new double[Axis.Length][];
             Axis_IO = new int[Axis.Length][];
             Stopwatch stopwatch = new Stopwatch();
             while (true)
             {
                 stopwatch.Restart();
+
                 for (ushort i = 0; i < Card_Number.Length; i++)
                 {
                     IO_Input = Getall_IOinput(i);
                     IO_Output = Getall_IOoutput(i);
                 }
-                for (int i = 0; i < 4; i++)
-                {
-                    ADC_RealTime_AD[i] = Read_AD(0, (ushort)i);
-                    ADC_RealTime_DA[i] = Read_DA(0, (ushort)i);
-                }
                 stopwatch.Stop();
-                Thread.Sleep(20);
+                Thread.Sleep(10);
+                Console.WriteLine("IO=>" + stopwatch.Elapsed);//数据刷新用时
                 AutoReadEvent.WaitOne();
             }
         }
@@ -154,8 +124,8 @@ namespace MotionClass
                     CoordinateSystemStates[i] = LTDMC.dmc_check_done_multicoor(Card_Number[0], i);
                 }
                 stopwatch.Stop();
-                Thread.Sleep(20);
-                ///Console.WriteLine("State=>" + stopwatch.Elapsed);//数据刷新用时
+                Thread.Sleep(10);
+                Console.WriteLine("State=>" + stopwatch.Elapsed);//数据刷新用时
                 AutoReadEvent.WaitOne();
             }
         }
@@ -196,8 +166,7 @@ namespace MotionClass
                         Console.WriteLine(stopwatch.Elapsed);
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
-                        else
-                            throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
+                        throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
                     }
                 }
             }
@@ -292,7 +261,7 @@ namespace MotionClass
                     Timeout:
                         stopwatch.Stop();
                         AxisStop(state.Axis);
-                        //Console.WriteLine(stopwatch.Elapsed);
+                        Console.WriteLine(stopwatch.Elapsed);
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, true, $"{state.Axis}轴定位地址{state.Position}，单轴阻塞绝对定位等待到位超时（{stopwatch.Elapsed}）");
                         else
@@ -423,7 +392,7 @@ namespace MotionClass
                     Timeout:
                         stopwatch.Stop();
                         AxisStop(axis);
-                        //Console.WriteLine(stopwatch.Elapsed);
+                        Console.WriteLine(stopwatch.Elapsed);
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, true, $"{axis}轴定位地址{position}，单轴阻塞绝对定位等待到位超时（{stopwatch.Elapsed}）");
                         else
@@ -492,6 +461,7 @@ namespace MotionClass
                             LTDMC.dmc_set_home_pin_logic(Card_Number[0], state.Axis, 0, 0);//设置原点低电平有效
                             LTDMC.dmc_set_profile(Card_Number[0], state.Axis, state.Speed, state.Speed * 2, state.ACC, state.Dcc, state.Dcc);//设置起始速度、运行速度、停止速度、加速时间、减速时间
                             LTDMC.dmc_set_homemode(Card_Number[0], state.Axis, 1, 1, state.HomeModel, 0);//设置回零模式
+
                             CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], state.Axis));
                             Thread.Sleep(50);
                         }
@@ -517,6 +487,7 @@ namespace MotionClass
                             {
                                 IMoveStateQueue.Remove(state);
                             }
+
                             LTDMC.dmc_set_position(Card_Number[0], state.Axis, 0);
                             LTDMC.dmc_set_encoder(Card_Number[0], state.Axis, 0);
                             return;
@@ -597,17 +568,9 @@ namespace MotionClass
                                 CardLogEvent(DateTime.Now, false, $"{axis}单轴阻塞原点回归启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                             stopwatch.Restart();
-                            double tv = Math.Abs(home_speed);
                             LTDMC.dmc_set_home_pin_logic(Card_Number[0], axis, 0, 0);//设置原点低电平有效
-                            LTDMC.dmc_set_profile(Card_Number[0], axis, tv, tv * 2, acc, dcc, dcc);//设置起始速度、运行速度、停止速度、加速时间、减速时间
-                            if (home_speed > 0)
-                            {
-                                LTDMC.dmc_set_homemode(Card_Number[0], axis, 1, 1, home_model, 0);//设置回零模式
-                            }
-                            else
-                            {
-                                LTDMC.dmc_set_homemode(Card_Number[0], axis, 0, 1, home_model, 0);//设置回零模式
-                            }
+                            LTDMC.dmc_set_profile(Card_Number[0], axis, home_speed, home_speed * 2, acc, dcc, dcc);//设置起始速度、运行速度、停止速度、加速时间、减速时间
+                            LTDMC.dmc_set_homemode(Card_Number[0], axis, 1, 1, home_model, 0);//设置回零模式
                             state = new MoveState()
                             {
                                 Axis = axis,
@@ -1454,27 +1417,10 @@ namespace MotionClass
             {
                 if (IO_Input != null)
                 {
-
                     var input = LTDMC.dmc_read_inport(Card_Number[card], 0);
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < IO_Input.Length; i++)
                     {
                         IO_Input[i] = (input & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    uint[] ipt = new uint[3];
-                    LTDMC.nmc_read_inport(Card_Number[card], 1, 0, ref ipt[0]);
-                    for (int i = 0; i < 16; i++)
-                    {
-                        IO_Input[i + 16] = (ipt[0] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    LTDMC.nmc_read_inport(Card_Number[card], 2, 0, ref ipt[1]);
-                    for (int i = 0; i < 32; i++)
-                    {
-                        IO_Input[i + 32] = (ipt[1] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    LTDMC.nmc_read_inport(Card_Number[card], 2, 1, ref ipt[2]);
-                    for (int i = 0; i < 16; i++)
-                    {
-                        IO_Input[i + 64] = (ipt[2] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
                     }
                 }
             }
@@ -1495,25 +1441,9 @@ namespace MotionClass
                 if (IO_Output != null)
                 {
                     var output = LTDMC.dmc_read_outport(Card_Number[card], 0);
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < IO_Output.Length; i++)
                     {
                         IO_Output[i] = (output & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    uint[] ipt = new uint[3];
-                    LTDMC.nmc_read_outport(Card_Number[card], 1, 0, ref ipt[0]);
-                    for (int i = 0; i < 16; i++)
-                    {
-                        IO_Output[i + 16] = (ipt[0] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    LTDMC.nmc_read_outport(Card_Number[card], 2, 0, ref ipt[1]);
-                    for (int i = 0; i < 32; i++)
-                    {
-                        IO_Output[i + 32] = (ipt[1] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
-                    }
-                    LTDMC.nmc_read_outport(Card_Number[card], 2, 1, ref ipt[2]);
-                    for (int i = 0; i < 16; i++)
-                    {
-                        IO_Output[i + 64] = (ipt[2] & (1 << i)) == 0 ? !LevelSignal : LevelSignal;
                     }
                 }
                 else
@@ -1988,17 +1918,10 @@ namespace MotionClass
                                 CardLogEvent(DateTime.Now, false, $"{axis}单轴原点回归启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                             stopwatch.Restart();
-                            double tv = Math.Abs(home_speed);
+
                             LTDMC.dmc_set_home_pin_logic(Card_Number[0], axis, 0, 0);//设置原点低电平有效
-                            LTDMC.dmc_set_profile(Card_Number[0], axis, tv / 10, tv, acc, dcc, dcc);//设置起始速度、运行速度、停止速度、加速时间、减速时间
-                            if (home_speed > 0)
-                            {
-                                LTDMC.dmc_set_homemode(Card_Number[0], axis, 1, 1, home_model, 0);//设置回零模式
-                            }
-                            else
-                            {
-                                LTDMC.dmc_set_homemode(Card_Number[0], axis, 0, 1, home_model, 0);//设置回零模式
-                            }
+                            LTDMC.dmc_set_profile(Card_Number[0], axis, home_speed, home_speed * 2, acc, dcc, dcc);//设置起始速度、运行速度、停止速度、加速时间、减速时间
+                            LTDMC.dmc_set_homemode(Card_Number[0], axis, 1, 1, home_model, 0);//设置回零模式
                             //CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, home_model, home_speed / 2, home_speed, acc, dcc, offpos));
                             state = new MoveState()
                             {
@@ -2098,10 +2021,10 @@ namespace MotionClass
                 {
                     lock (Motion_Lok[axis])
                     {
-                        if (AxisStates[axis][4] == 1 && !Stop_sign[axis] && AxisStates[axis][5] == 4)
+                        if (AxisStates[axis][4] == 1 && AxisStates[axis][6] == 0 && !Stop_sign[axis] && AxisStates[axis][5] == 4)
                         {
                             CardErrorMessage(LTDMC.dmc_set_profile(Card_Number[0], axis, 0, speed, acc, dec, 0));//设置速度参数
-                            LTDMC.dmc_vmove(Card_Number[0], axis, (ushort)posi_mode);
+                            CardErrorMessage(LTDMC.dmc_vmove(Card_Number[0], axis, (ushort)posi_mode));
                         }
                         else if (Stop_sign[axis])
                         {
@@ -2767,19 +2690,22 @@ namespace MotionClass
                     ushort _num = 0;
                     ushort[] cardids = new ushort[cardid];
                     uint[] cardtypes = new uint[cardid];
-                    LTDMC.nmc_set_connect_state(0, 3, 1, 0);
+
                     short res = LTDMC.dmc_get_CardInfList(ref _num, cardtypes, cardids);
                     Card_Number = cardids;
                     uint totalaxis = 0;
+                    ushort input = 0;
+                    ushort output = 0;
                     CardErrorMessage(LTDMC.dmc_get_total_axes(Card_Number[0], ref totalaxis));
-                    IO_Input = new bool[80];
-                    IO_Output = new bool[80];
+                    //CardErrorMessage(LTDMC.dmc_get_total_ionum(Card_Number[0], ref input, ref output));
+                    IO_Input = new bool[20];
+                    IO_Output = new bool[20];
                     Axisquantity = (int)totalaxis;
                     Motion_Lok = new object[Axisquantity];
                     ThisStateMac = new ushort[Axisquantity];
                     TargetLocation = new double[Axisquantity];
                     if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, false, $"初始化{Card_Number.Length}张板卡，总轴数为{Axisquantity}");
+                        CardLogEvent(DateTime.Now, false, $"初始化{Card_Number}张板卡，总轴数为{Axisquantity}");
                     Axis = new ushort[Axisquantity];
                     Stop_sign = new bool[Axisquantity];
                     IsOpenCard = true;
@@ -2809,6 +2735,7 @@ namespace MotionClass
                     IsOpenCard = false;
                     if (Card_Number.Length == 0)
                     {
+
                         if (CardLogEvent != null)
                             CardLogEvent(DateTime.Now, true, $"未查找到{CardBrand}板卡!");
                         else
@@ -2834,7 +2761,7 @@ namespace MotionClass
 
         public override void SetAxis_iniFile(string path = "AXIS.ini")
         {
-            LTDMC.dmc_download_configfile(Card_Number[0], path);
+            CardErrorMessage(LTDMC.dmc_download_configfile(Card_Number[0], path));
         }
 
         public override void SetbjectDictionary(ushort card, ushort etherCATLocation, ushort primeindex, ushort wordindexing, ushort bitlength, int value)
@@ -2948,18 +2875,7 @@ namespace MotionClass
                         value = !value;
                     lock (this)
                     {
-                        if (indexes >= 0 && indexes < 16)
-                        {
-                            CardErrorMessage(LTDMC.dmc_write_outbit(Card_Number[card], indexes, Convert.ToUInt16(!value)));
-                        }
-                        else if (indexes >= 16 && indexes < 32)
-                        {
-                            LTDMC.nmc_write_outbit(Card_Number[card], 1, (ushort)(indexes - 16), Convert.ToUInt16(!value));
-                        }
-                        else if (indexes >= 32 && indexes < 80)
-                        {
-                            LTDMC.nmc_write_outbit(Card_Number[card], 2, (ushort)(indexes - 32), Convert.ToUInt16(!value));
-                        }
+                        CardErrorMessage(LTDMC.dmc_write_outbit(Card_Number[card], indexes, Convert.ToUInt16(!value)));
                     }
                     if (CardLogEvent != null)
                         CardLogEvent(DateTime.Now, false, $"设置输出口{indexes}，状态{!value}");
@@ -2995,456 +2911,7 @@ namespace MotionClass
                         Thread.Sleep(50);
                     } while (AxisStates[item][4] != 1 && AxisStates[item][6] != 0);
                 }
-            }
-        }
 
-        public override void Set_DA(ushort card, ushort channel_number, double voltage_values)
-        {
-            if (IsOpenCard)
-            {
-                if (voltage_values == 0)
-                    LTDMC.dmc_set_encoder(0, channel_number, 0);
-                if (channel_number < 2)
-                {
-                    CardErrorMessage(LTDMC.dmc_set_da_output(card, channel_number, voltage_values));
-                }
-                else
-                {
-                    if (channel_number == 2)
-                    {
-                        LTDMC.nmc_set_da_output(card, 3, 0, voltage_values);
-                    }
-                    else if (channel_number == 3)
-                    {
-                        LTDMC.nmc_set_da_output(card, 3, 1, voltage_values);
-                    }
-                }
-                if (CardLogEvent != null)
-                    CardLogEvent(DateTime.Now, false, $"设置DA通道：{channel_number}输出电压：{voltage_values}!");
-                else
-                    throw new Exception("未查找到板卡!");
-            }
-        }
-
-        public override double Read_DA(ushort card, ushort channel_number)
-        {
-            double value = 0;
-            if (IsOpenCard)
-            {
-                if (channel_number < 2)
-                {
-                    LTDMC.dmc_get_da_output(0, channel_number, ref value);
-                }
-                else
-                {
-                    if (channel_number == 2)
-                    {
-                        LTDMC.nmc_get_da_output(card, 3, (ushort)(channel_number - 2), ref value);
-                    }
-                    else if (channel_number == 3)
-                    {
-                        LTDMC.nmc_get_da_output(card, 3, (ushort)(channel_number - 2), ref value);
-                    }
-                }
-            }
-            return value;
-        }
-
-        public override double Read_AD(ushort card, ushort channel_number)
-        {
-            double value = 0;
-            if (IsOpenCard)
-            {
-                LTDMC.nmc_get_ad_input(card, 3, channel_number, ref value);
-            }
-            return value;
-        }
-
-        public override void Deploy_CAN(ushort card, ushort can_num, bool can_state, ushort can_baud = 0)
-        {
-            if (IsOpenCard)
-            {
-                LTDMC.dmc_set_da_enable(0, 1);
-                bool a = CardErrorMessage(LTDMC.nmc_set_connect_state(card, can_num, (ushort)(can_state == false ? 0 : 1), can_baud));
-                LTDMC.nmc_set_da_mode(0, 3, 0, 0, 0);
-                LTDMC.nmc_set_da_mode(0, 3, 1, 0, 0);
-                for (int i = 0; i < 4; i++)
-                {
-                    LTDMC.nmc_set_ad_mode(0, 3, (ushort)i, 0, 0);
-                }
-                if (a)
-                {
-                    if (can_state)
-                    {
-                        CAN_IsOpen = true;
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, false, $"打开CAN扩展通讯，CAN节点数：{can_num}!");
-                        else
-                            throw new Exception("未查找到板卡!");
-                    }
-                    else
-                    {
-                        CAN_IsOpen = false;
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, false, $"关闭CAN扩展通讯!");
-                        else
-                            throw new Exception("未查找到板卡!");
-                    }
-                }
-            }
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
-        {
-            Special_io = new bool[80];
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    lock (this)
-                    {
-                        Thread.Sleep(50);
-                        if (IO_Input != null)
-                        {
-                            if (!Special_io[estop])//紧急停止
-                            {
-                                if (IO_Input[estop])
-                                {
-                                    EStopPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[estop])
-                            {
-                                if (!IO_Input[estop])
-                                {
-                                    EStopNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[estop] = IO_Input[estop];
-                            AutoReadEvent.WaitOne();
-                            if (!Special_io[stop])//停止
-                            {
-                                if (IO_Input[stop])
-                                {
-                                    StopPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[stop])
-                            {
-                                if (!IO_Input[stop])
-                                {
-                                    StopNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[stop] = IO_Input[stop];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[reset])//复位
-                            {
-                                if (IO_Input[reset])
-                                {
-                                    ResetPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[reset])
-                            {
-                                if (!IO_Input[reset])
-                                {
-                                    ResetNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[reset] = IO_Input[reset];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[start])//启动
-                            {
-                                if (IO_Input[start])
-                                {
-                                    StartPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[start])
-                            {
-                                if (!IO_Input[start])
-                                {
-                                    StartNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[start] = IO_Input[start];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[raster])//光栅
-                            {
-                                if (IO_Input[raster])
-                                {
-                                    RasterPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[raster])
-                            {
-                                if (!IO_Input[raster])
-                                {
-                                    RasterNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[raster] = IO_Input[raster];
-                            AutoReadEvent.WaitOne();
-
-
-                            if (!Special_io[entrance])//门禁
-                            {
-                                if (IO_Input[entrance])
-                                {
-                                    EntrancePEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[entrance])
-                            {
-                                if (!IO_Input[entrance])
-                                {
-                                    EntranceNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[entrance] = IO_Input[entrance];
-                            AutoReadEvent.WaitOne();
-                        }
-                    }
-                }
-            });
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster1, ushort raster2, ushort entrance1, ushort entrance2)
-        {
-            Special_io = new bool[IO_Input.Length];
-            for (int i = 0; i < IO_Input.Length; i++)
-            {
-                Special_io[i] = IO_Input[i];
-            }
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    lock (this)
-                    {
-                        Thread.Sleep(50);
-                        if (IO_Input != null)
-                        {
-                            if (!Special_io[estop])//紧急停止
-                            {
-                                if (IO_Input[estop])
-                                {
-                                    EStopPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[estop])
-                            {
-                                if (!IO_Input[estop])
-                                {
-                                    EStopNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[estop] = IO_Input[estop];
-                            AutoReadEvent.WaitOne();
-                            if (!Special_io[stop])//停止
-                            {
-                                if (IO_Input[stop])
-                                {
-                                    StopPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[stop])
-                            {
-                                if (!IO_Input[stop])
-                                {
-                                    StopNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[stop] = IO_Input[stop];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[reset])//复位
-                            {
-                                if (IO_Input[reset])
-                                {
-                                    ResetPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[reset])
-                            {
-                                if (!IO_Input[reset])
-                                {
-                                    ResetNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[reset] = IO_Input[reset];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[start])//启动
-                            {
-                                if (IO_Input[start])
-                                {
-                                    StartPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[start])
-                            {
-                                if (!IO_Input[start])
-                                {
-                                    StartNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[start] = IO_Input[start];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[raster2])//光栅
-                            {
-                                if (IO_Input[raster2])
-                                {
-                                    RasterPEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[raster2])
-                            {
-                                if (!IO_Input[raster2])
-                                {
-                                    RasterNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[raster2] = IO_Input[raster2];
-                            AutoReadEvent.WaitOne();
-
-                            if (!Special_io[entrance1])//门禁1
-                            {
-                                if (IO_Input[entrance1])
-                                {
-                                    EntrancePEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[entrance1])
-                            {
-                                if (!IO_Input[entrance1])
-                                {
-                                    EntranceNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[entrance1] = IO_Input[entrance1];
-                            AutoReadEvent.WaitOne();
-                            if (!Special_io[entrance2])//门禁1
-                            {
-                                if (IO_Input[entrance2])
-                                {
-                                    EntrancePEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            if (Special_io[entrance2])
-                            {
-                                if (!IO_Input[entrance2])
-                                {
-                                    EntranceNEvent?.Invoke(new DateTime());
-                                }
-                            }
-                            Special_io[entrance2] = IO_Input[entrance2];
-                            AutoReadEvent.WaitOne();
-                        }
-                    }
-                }
-            });
-        }
-
-        public override void Set_IOoutput_Enum(ushort card, OutPut indexes_enm, bool value)
-        {
-            if (IsOpenCard)
-            {
-                ushort indexes = Convert.ToUInt16(indexes_enm);
-                if (IO_Output != null)
-                {
-                    if (LevelSignal)
-                        value = !value;
-                    lock (this)
-                    {
-                        if (indexes >= 0 && indexes < 16)
-                        {
-                            CardErrorMessage(LTDMC.dmc_write_outbit(Card_Number[card], indexes, Convert.ToUInt16(!value)));
-                        }
-                        else if (indexes >= 16 && indexes < 32)
-                        {
-                            LTDMC.nmc_write_outbit(Card_Number[card], 1, (ushort)(indexes - 16), Convert.ToUInt16(!value));
-                        }
-                        else if (indexes >= 32 && indexes < 80)
-                        {
-                            LTDMC.nmc_write_outbit(Card_Number[card], 2, (ushort)(indexes - 32), Convert.ToUInt16(!value));
-                        }
-                    }
-                    if (CardLogEvent != null)
-                        CardLogEvent(DateTime.Now, false, $"设置输出口{indexes}，状态{!value}");
-                }
-                else
-                {
-                    if (Card_Number == null)
-                    {
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, true, $"请先调用OpenCard方法！");
-                        else
-                            throw new Exception($"请先调用OpenCard方法！");
-                    }
-                }
-            }
-            else
-            {
-                if (CardLogEvent != null)
-                    CardLogEvent(DateTime.Now, true, $"请先调用OpenCard方法！");
-                else
-                    throw new Exception($"请先调用OpenCard方法！");
-            }
-        }
-
-        public override void AwaitIOinput_Enum(ushort card, InPuts indexes_enm, bool waitvalue, int timeout = 0)
-        {
-            if (IsOpenCard)
-            {
-                ushort indexes = Convert.ToUInt16(indexes_enm);
-                if (IO_Input != null)
-                {
-                    if (LevelSignal)
-                        waitvalue = !waitvalue;
-                    Stopwatch stopwatch = new Stopwatch();
-                    try
-                    {
-                        stopwatch.Restart();
-                        do
-                        {
-                            Thread.Sleep(20);
-                            if (timeout != 0 && stopwatch.Elapsed.TotalMilliseconds > timeout)
-                                goto Timeout;
-
-                        } while (IO_Input[indexes] != waitvalue);
-                        stopwatch.Stop();
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, false, $"等待输入口{indexes}，状态{waitvalue}完成（{stopwatch.Elapsed}）");
-                        return;
-                    Timeout:
-                        stopwatch.Stop();
-                        Console.WriteLine(stopwatch.Elapsed);
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{waitvalue}超时（{stopwatch.Elapsed}）");
-                        throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}超时（{stopwatch.Elapsed}）");
-                    }
-                    catch (ThreadAbortException ex)
-                    {
-                        stopwatch.Stop();
-                        Console.WriteLine(stopwatch.Elapsed);
-                        if (CardLogEvent != null)
-                            CardLogEvent(DateTime.Now, true, $"等待输入口{indexes}，状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
-                        else
-                            throw new Exception($"等待输入口{indexes}，等待状态{waitvalue}线程异常中断（{stopwatch.Elapsed}）");
-                    }
-                }
-            }
-            else
-            {
-                if (CardLogEvent != null)
-                    CardLogEvent(DateTime.Now, true, $"请先调用OpenCard方法！");
-                throw new Exception($"请先调用OpenCard方法！");
             }
         }
     }

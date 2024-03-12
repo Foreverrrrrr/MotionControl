@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Motion</RootNamespace>
     <AssemblyName>Motion</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,9 +55,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dmc1000.cs" />
     <Compile Include="IControlBaseInterface.cs" />
-    <Compile Include="LeiSai.cs" />
+    <Compile Include="LeiSaiEtherCAT.cs" />
+    <Compile Include="LeiSaiPulse.cs" />
     <Compile Include="LTDMC.cs" />
+    <Compile Include="MCDLL_NET.cs" />
+    <Compile Include="MoShengTai.cs" />
     <Compile Include="MotionBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

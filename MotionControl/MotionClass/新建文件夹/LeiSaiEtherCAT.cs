@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MotionClass
+namespace MotionControl
 {
     /// <summary>
     /// 雷赛板卡实现类
@@ -160,9 +160,13 @@ namespace MotionClass
         /// </summary>
         public override CancellationTokenSource[] Task_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override CancellationToken[] cancellation_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+<<<<<<<< HEAD:MotionControl/MotionClass/LeiSaiEtherCAT.cs
         public override bool CAN_IsOpen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override double[] ADC_RealTime_DA { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public override double[] ADC_RealTime_AD { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+========
+>>>>>>>> f23f0c69fecfcb771f29bff7a3a9e5a898b18411:MotionControl/MotionClass/新建文件夹/LeiSaiEtherCAT.cs
 
         /// <summary>
         /// 板卡运行日志事件
@@ -3059,6 +3063,7 @@ namespace MotionClass
         {
             throw new NotImplementedException();
         }
+<<<<<<<< HEAD:MotionControl/MotionClass/LeiSaiEtherCAT.cs
 
         public override void Set_IOoutput_Enum(ushort card, OutPut indexes, bool value)
         {
@@ -3099,5 +3104,7 @@ namespace MotionClass
         {
             throw new NotImplementedException();
         }
+========
+>>>>>>>> f23f0c69fecfcb771f29bff7a3a9e5a898b18411:MotionControl/MotionClass/新建文件夹/LeiSaiEtherCAT.cs
     }
 }
