@@ -141,9 +141,6 @@ namespace MotionControl
         /// </summary>
         public override CancellationTokenSource[] Task_Token { get; set; }
         public override CancellationToken[] cancellation_Token { get; set; }
-        public override bool CAN_IsOpen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override double[] ADC_RealTime_DA { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override double[] ADC_RealTime_AD { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public MoShengTai()
         {
@@ -253,7 +250,7 @@ namespace MotionControl
             }
         }
 
-        public override void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0)
+        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
             {
@@ -2016,7 +2013,7 @@ namespace MotionControl
                         return;
                     }
                 }
-
+                
                 var coordinate = Array.IndexOf(CoordinateSystemStates, (short)4);
                 CoordinateSystemStates[coordinate] = 0;
                 if (coordinate != -1)
@@ -2253,7 +2250,7 @@ namespace MotionControl
                 IO_Input = inputList.ToArray();
                 IO_Output = outputList.ToArray();
                 stopwatch.Stop();
-                // Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
+                Console.WriteLine(stopwatch.Elapsed);//数据刷新用时
                 AutoReadEvent.WaitOne();
             }
         }
@@ -2268,7 +2265,7 @@ namespace MotionControl
         /// </summary>
         public override void SetAxis_iniFile(string path)
         {
-            string[] lines = System.IO.File.ReadAllLines(path);
+            Span<string> lines = System.IO.File.ReadAllLines(path);
             string pattern = "=(.*)";
             string io = null;
             for (int i = 0; i < lines.Length; i++)
@@ -2605,46 +2602,6 @@ namespace MotionControl
         }
 
         public override void WaitAxis(int[] axis)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Set_IOoutput_Enum(ushort card, OutPut indexes, bool value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void AwaitIOinput_Enum(ushort card, InPuts indexes, bool waitvalue, int timeout = 0)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster1, ushort raster2, ushort entrance1, ushort entrance2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Set_DA(ushort card, ushort channel_number, double voltage_values)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double Read_DA(ushort card, ushort channel_number)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double Read_AD(ushort card, ushort channel_number)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Deploy_CAN(ushort card, ushort can_num, bool can_state, ushort can_baud = 0)
         {
             throw new NotImplementedException();
         }

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
-
+using System.Windows.Markup;
 
 namespace MotionControl
 {
@@ -306,7 +306,7 @@ namespace MotionControl
         void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0);
 
         /// <summary>
-        /// 外部IO单按钮触发事件设置
+        /// 外部IO单按钮触发事件设置(单启动)
         /// </summary>
         /// <param name="start">启动按钮输入点</param>
         /// <param name="reset">复位按钮输入点</param>
@@ -314,6 +314,27 @@ namespace MotionControl
         /// <param name="estop">紧急停止按钮输入点</param>
         void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop);
 
+        /// <summary>
+        /// 外部IO单按钮触发事件
+        /// </summary>
+        /// <param name="start1">启动一输入点</param>
+        /// <param name="start2">启动二输入点</param>
+        /// <param name="reset">复位输入点</param>
+        /// <param name="stop">停止输入点</param>
+        /// <param name="estop">紧急停止按钮输入点</param>
+        void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop);
+
+        /// <summary>
+        /// 外部IO单按钮触发事件设置(双启动)
+        /// </summary>
+        /// <param name="start1">启动按钮一输入点</param>
+        /// <param name="start2">启动按钮二输入点</param>
+        /// <param name="reset">复位按钮输入点</param>
+        /// <param name="stop">停止按钮输入点</param>
+        /// <param name="estop">紧急停止按钮输入点</param>
+        /// <param name="raster">光栅输入点</param>
+        /// <param name="entrance">门禁输入点</param>
+        void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
         /// <summary>
         /// 运动控制卡复位
         /// </summary>
@@ -331,7 +352,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.2, double dcc = 0.2, double offpos = 0);
 
         /// <summary>
         /// 单轴阻塞原点回归
@@ -343,7 +364,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
+        void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.2, double dcc = 0.2, double offpos = 0);
 
         /// <summary>
         /// 设置伺服对象字典

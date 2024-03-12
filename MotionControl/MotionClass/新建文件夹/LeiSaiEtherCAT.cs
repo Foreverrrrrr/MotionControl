@@ -53,15 +53,6 @@ namespace MotionControl
         public override event Action<DateTime> EStopNEvent;
 
         /// <summary>
-        /// 门禁上升沿触发
-        /// </summary>
-        public override event Action<DateTime> EntrancePEvent;
-
-        /// <summary>
-        /// 门禁下降沿触发
-        /// </summary>
-        public override event Action<DateTime> EntranceNEvent;
-        /// <summary>
         /// 数字io输入
         /// </summary>
         public override bool[] IO_Input { get; set; }
@@ -2548,7 +2539,6 @@ namespace MotionControl
                             CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, home_model, home_speed / 2, home_speed, acc, dcc, offpos));
                             state = new MoveState()
                             {
-                                HomeModel= home_model,
                                 Axis = axis,
                                 Speed = home_speed,
                                 Position = 0,
