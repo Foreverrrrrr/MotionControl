@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace MotionControl
+namespace MotionClass
 {
     public class CMCDLL_NET
     {

@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace MotionControl
+namespace MotionClass
 {
     public delegate uint DMC3K5K_OPERATE(IntPtr operate_data);
     public partial class LTDMC

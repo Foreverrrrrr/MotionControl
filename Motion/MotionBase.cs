@@ -1,10 +1,9 @@
-﻿using SQLiteHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace MotionControl
+namespace MotionClass
 {
     /// <summary>
     /// 运动控制基类
@@ -17,6 +16,14 @@ namespace MotionControl
         public static extern void timeBeginPeriod(int t);
         [DllImport("winmm")]
         public static extern void timeEndPeriod(int t);
+
+        public enum InPuts
+        {
+        }
+
+        public enum OutPut
+        {
+        }
 
         /// <summary>
         /// 运动控制类实例对象
@@ -48,6 +55,21 @@ namespace MotionControl
         /// 板卡号
         /// </summary>
         public abstract ushort[] Card_Number { get; set; }
+
+        /// <summary>
+        /// CAN通讯状态
+        /// </summary>
+        public abstract bool CAN_IsOpen { get; set; }
+
+        /// <summary>
+        /// 实时DA值
+        /// </summary>
+        public abstract double[] ADC_RealTime_DA { get; set; }
+
+        /// <summary>
+        /// 实时AD值
+        /// </summary>
+        public abstract double[] ADC_RealTime_AD { get; set; }
 
         /// <summary>
         /// 轴号
@@ -92,7 +114,7 @@ namespace MotionControl
         /// 运动控制类方法内部Taks线程令牌
         /// </summary>
         public abstract CancellationTokenSource[] Task_Token { get; set; }
-        /// <inheritdoc/>
+
         public abstract CancellationToken[] cancellation_Token { get; set; }
 
         /// <summary>
@@ -148,20 +170,20 @@ namespace MotionControl
         /// <summary>
         /// 光栅上升沿触发事件
         /// </summary>
-        public virtual event Action<DateTime> GratingPEvent;
+        public virtual event Action<DateTime> RasterPEvent;
 
         /// <summary>
-        /// 光栅下降沿触发事件
+        /// 光栅按钮下降沿触发事件
         /// </summary>
-        public virtual event Action<DateTime> GratingNEvent;
+        public virtual event Action<DateTime> RasterNEvent;
 
         /// <summary>
-        /// 门禁上升沿触发
+        /// 门禁上升沿触发事件
         /// </summary>
         public virtual event Action<DateTime> EntrancePEvent;
 
         /// <summary>
-        /// 门禁下降沿触发
+        /// 门禁按钮下降沿触发事件
         /// </summary>
         public virtual event Action<DateTime> EntranceNEvent;
 
@@ -207,7 +229,7 @@ namespace MotionControl
             /// <summary>
             /// 原点回归模式
             /// </summary>
-            public short HomeModel { get; set; }
+            public ushort HomeModel { get; set; }
             /// <summary>
             /// 加速度
             /// </summary>
@@ -365,13 +387,9 @@ namespace MotionControl
             /// </summary>
             LeiSaiEtherCat,
             /// <summary>
-            /// 雷赛3000-5000系列脉冲卡
+            /// 雷赛脉冲卡
             /// </summary>
             LeiSaiPulse,
-            /// <summary>
-            /// 雷赛1000系列脉冲卡
-            /// </summary>
-            LeiSaiPulse_1000B,
             /// <summary>
             /// 高川板卡
             /// </summary>
@@ -479,7 +497,7 @@ namespace MotionControl
                 string data = "";
                 if (returnPattern)
                 {
-                    data = SQLHelper.Readdata(CardBrand, Convert.ToInt32(type));
+                    //data = SQLHelper.Readdata(CardBrand, Convert.ToInt32(type));
                 }
                 if (CardErrorMessageEvent != null)
                     CardErrorMessageEvent(Convert.ToInt64(type), data);
@@ -632,6 +650,8 @@ namespace MotionControl
         /// <returns></returns>
         public abstract bool[] Getall_IOinput(ushort card);
 
+
+
         /// <summary>
         /// 获取板卡全部数字输出
         /// </summary>
@@ -646,6 +666,14 @@ namespace MotionControl
         /// <param name="indexes">输出点位</param>
         /// <param name="value">输出值</param>
         public abstract void Set_IOoutput(ushort card, ushort indexes, bool value);
+
+        /// <summary>
+        /// 设置数字输出
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="indexes">输出点位</param>
+        /// <param name="value">输出值</param>
+        public abstract void Set_IOoutput_Enum(ushort card, OutPut indexes, bool value);
 
         /// <summary>
         /// 设置紧急停止外部IO
@@ -665,6 +693,15 @@ namespace MotionControl
         public abstract void AwaitIOinput(ushort card, ushort indexes, bool waitvalue, int timeout = 0);
 
         /// <summary>
+        /// 等待输入信号
+        /// </summary>
+        /// <param name="card">板卡号</param>
+        /// <param name="indexes">输入口</param>
+        /// <param name="waitvalue">等待状态</param>
+        /// <param name="timeout">等待超时时间</param>
+        public abstract void AwaitIOinput_Enum(ushort card, InPuts indexes, bool waitvalue, int timeout = 0);
+
+        /// <summary>
         /// 外部IO单按钮触发事件设置
         /// </summary>
         /// <param name="start">启动按钮输入点</param>
@@ -673,6 +710,17 @@ namespace MotionControl
         /// <param name="estop">紧急停止按钮输入点</param>
         public abstract void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop);
 
+        /// <summary>
+        /// 外部IO单按钮触发事件设置
+        /// </summary>
+        /// <param name="start">启动按钮输入点</param>
+        /// <param name="reset">复位按钮输入点</param>
+        /// <param name="stop">停止按钮输入点</param>
+        /// <param name="estop">紧急停止按钮输入点</param>
+        /// <param name="raster">光栅</param>
+        /// <param name="entrance">门禁</param>
+        public abstract void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
+        public abstract void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster1, ushort raster2, ushort entrance1, ushort entrance2);
         /// <summary>
         /// 读取总线状态
         /// </summary>
@@ -697,7 +745,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
+        public abstract void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
 
         /// <summary>
         /// 单轴阻塞原点回归
@@ -709,7 +757,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public abstract void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.1, double dcc = 0.1, double offpos = 0);
+        public abstract void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0);
 
         /// <summary>
         /// 设置伺服对象字典
@@ -785,11 +833,41 @@ namespace MotionControl
         /// </summary>
         /// <param name="axis">轴号</param>
         public abstract void AxisReset(ushort axis);
-        /// <inheritdoc/>
         public abstract void WaitAxis(int[] axis);
-        /// <inheritdoc/>
-        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance);
-        /// <inheritdoc/>
-        public abstract void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop);
+
+        /// <summary>
+        /// 设置DA输出
+        /// </summary>
+        /// <param name="card">卡号</param>
+        /// <param name="channel_number">通道号</param>
+        /// <param name="voltage_values">电压值</param>
+        public abstract void Set_DA(ushort card, ushort channel_number, double voltage_values);
+
+
+        /// <summary>
+        /// 读取DA输出
+        /// </summary>
+        /// <param name="card">卡号</param>
+        /// <param name="channel_number">通道号</param>
+        /// <returns>读取电压值</returns>
+        public abstract double Read_DA(ushort card, ushort channel_number);
+
+        /// <summary>
+        /// 读取AD输出
+        /// </summary>
+        /// <param name="card">控制卡号</param>
+        /// <param name="channel_number">AD通道号</param>
+        /// <returns></returns>
+        public abstract double Read_AD(ushort card, ushort channel_number);
+
+        /// <summary>
+        /// 配置CAN扩展
+        /// </summary>
+        /// <param name="card">控制卡号</param>
+        /// <param name="can_num">CAN连接数  1-8</param>
+        /// <param name="can_state">CAN连接状态 false==断开 true==连接</param>
+        /// <param name="can_baud">CAN波特率  0=1000Kbps</param>
+        public abstract void Deploy_CAN(ushort card, ushort can_num, bool can_state, ushort can_baud = 0);
     }
+
 }

@@ -41,6 +41,8 @@ namespace MotionControl
         /// 目标位置
         /// </summary>
         private double[] TargetLocation { get; set; }
+        public override ushort CANNumber { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override ushort CANState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public LeiSaiPulse_1000B()
         {
@@ -472,6 +474,11 @@ namespace MotionControl
         }
 
         public override void WaitAxis(int[] axis)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Set_CAN_State(ushort card, ushort can_num, bool state)
         {
             throw new NotImplementedException();
         }

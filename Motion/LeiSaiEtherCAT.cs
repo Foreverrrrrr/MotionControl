@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MotionControl
+namespace MotionClass
 {
     /// <summary>
     /// 雷赛板卡实现类
@@ -52,15 +52,6 @@ namespace MotionControl
         /// </summary>
         public override event Action<DateTime> EStopNEvent;
 
-        /// <summary>
-        /// 门禁上升沿触发
-        /// </summary>
-        public override event Action<DateTime> EntrancePEvent;
-
-        /// <summary>
-        /// 门禁下降沿触发
-        /// </summary>
-        public override event Action<DateTime> EntranceNEvent;
         /// <summary>
         /// 数字io输入
         /// </summary>
@@ -168,8 +159,10 @@ namespace MotionControl
         /// 运动控制类方法内部Taks线程令牌
         /// </summary>
         public override CancellationTokenSource[] Task_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        /// <inheritdoc/>
         public override CancellationToken[] cancellation_Token { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override bool CAN_IsOpen { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override double[] ADC_RealTime_DA { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override double[] ADC_RealTime_AD { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         /// <summary>
         /// 板卡运行日志事件
@@ -1049,7 +1042,7 @@ namespace MotionControl
                                 CardLogEvent(DateTime.Now, false, $"{state.Axis}单轴原点回归复位启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], state.Axis));
                             stopwatch.Restart();
-                            _ = CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, (ushort)state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
+                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
                             CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], state.Axis));
                             Thread.Sleep(50);
                         }
@@ -1157,7 +1150,7 @@ namespace MotionControl
                                 CardLogEvent(DateTime.Now, false, $"{state.Axis}单轴阻塞原点回归复位启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], state.Axis));
                             stopwatch.Restart();
-                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, (ushort)state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
+                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], state.Axis, state.HomeModel, state.Speed / 2, state.Speed, state.ACC, state.Dcc, state.Home_off));
 
                             CardErrorMessage(LTDMC.nmc_home_move(Card_Number[0], state.Axis));
                             Thread.Sleep(50);
@@ -2364,7 +2357,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public override void MoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void MoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
             {
@@ -2401,7 +2394,7 @@ namespace MotionControl
                                 CardLogEvent(DateTime.Now, false, $"{axis}单轴原点回归启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                             stopwatch.Restart();
-                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, (ushort)home_model, home_speed / 2, home_speed, acc, dcc, offpos));
+                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, home_model, home_speed / 2, home_speed, acc, dcc, offpos));
                             state = new MoveState()
                             {
                                 Axis = axis,
@@ -2502,7 +2495,7 @@ namespace MotionControl
         /// <param name="acc">回零加速度</param>
         /// <param name="dcc">回零减速度</param>
         /// <param name="offpos">零点偏移</param>
-        public override void AwaitMoveHome(ushort axis, short home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
+        public override void AwaitMoveHome(ushort axis, ushort home_model, double home_speed, int timeout = 0, double acc = 0.5, double dcc = 0.5, double offpos = 0)
         {
             if (IsOpenCard)
             {
@@ -2539,10 +2532,9 @@ namespace MotionControl
                                 CardLogEvent(DateTime.Now, false, $"{axis}单轴阻塞原点回归启动！");
                             CardErrorMessage(LTDMC.dmc_clear_stop_reason(Card_Number[0], axis));
                             stopwatch.Restart();
-                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, (ushort)home_model, home_speed / 2, home_speed, acc, dcc, offpos));
+                            CardErrorMessage(LTDMC.nmc_set_home_profile(Card_Number[0], axis, home_model, home_speed / 2, home_speed, acc, dcc, offpos));
                             state = new MoveState()
                             {
-                                HomeModel= home_model,
                                 Axis = axis,
                                 Speed = home_speed,
                                 Position = 0,
@@ -3068,12 +3060,42 @@ namespace MotionControl
             throw new NotImplementedException();
         }
 
-        public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
+        public override void Set_IOoutput_Enum(ushort card, OutPut indexes, bool value)
         {
             throw new NotImplementedException();
         }
 
-        public override void SetExternalTrigger(ushort start1, ushort start2, ushort reset, ushort stop, ushort estop)
+        public override void AwaitIOinput_Enum(ushort card, InPuts indexes, bool waitvalue, int timeout = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster, ushort entrance)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetExternalTrigger(ushort start, ushort reset, ushort stop, ushort estop, ushort raster1, ushort raster2, ushort entrance1, ushort entrance2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Set_DA(ushort card, ushort channel_number, double voltage_values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double Read_DA(ushort card, ushort channel_number)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double Read_AD(ushort card, ushort channel_number)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Deploy_CAN(ushort card, ushort can_num, bool can_state, ushort can_baud = 0)
         {
             throw new NotImplementedException();
         }
